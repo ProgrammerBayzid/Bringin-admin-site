@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Button, Modal } from "antd";
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
-import { AiFillDelete , AiTwotoneEdit} from "react-icons/ai";
+import { useEffect, useRef } from "react";
+import { AiFillDelete } from "react-icons/ai";
+
+import Spinner from "../../Spinner/Spinner";
 
 const JobType = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -11,15 +13,14 @@ const JobType = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-
-    fetch("https://app.bringin.io/admin/jobtype")
+    fetch("http://rsapp.bringin.io/admin/jobtype")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
         setJobType(data);
         console.log(data);
       });
-  }, []);
+  }, [refresh]);
   console.log(jobType);
 
   const {
@@ -35,7 +36,7 @@ const JobType = () => {
       published_date: new Date().toLocaleString(),
     };
 
-    fetch("https://app.bringin.io/jobtype", {
+    fetch("http://rsapp.bringin.io/jobtype", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -45,35 +46,31 @@ const JobType = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data) {
-          setRefresh(!refresh)
-      }
+          setRefresh(!refresh);
+        }
         e.target.reset();
         console.log(data);
+
       });
   };
 
-
-  const handelDeeted = id => {
-    const proced = window.confirm('Are You Sure')
+  const handelDeeted = (id) => {
+    const proced = window.confirm("Are You Sure");
     if (proced) {
-        fetch(`https://app.bringin.io/admin/jobtype/${id}`, {
-            method: "DELETE",
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log(data)
-                if (data) {
-                    alert('deleted successfully');
-                    const remaining = jobType?.filter(odr => odr._id !== id);
-                    setJobType(remaining);
-                }
-            })
-
+      fetch(`http://rsapp.bringin.io/admin/jobtype/${id}`, {
+        method: "DELETE",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          if (data) {
+            alert("deleted successfully");
+            const remaining = jobType?.filter((odr) => odr._id !== id);
+            setJobType(remaining);
+          }
+        });
     }
-};
-
-
-
+  };
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -87,6 +84,35 @@ const JobType = () => {
     setIsModalOpen(false);
   };
 
+
+
+const dragItem=useRef(null)
+const dragOverItem=useRef(null)
+
+
+const handelSort=()=>{
+  let _jobType =[...jobType]
+     //remove and save the dragged item content
+     const draggedItemContent = _jobType.splice(dragItem.current, 1)[0];
+     //switch the position
+     _jobType.splice(dragOverItem.current, 0, draggedItemContent);
+
+    //reset the position ref
+    dragItem.current = null;
+    dragOverItem.current = null;
+
+    //update the actual array
+    setJobType(_jobType)
+}
+
+
+  if (isLoding === false) {
+    return (
+      <div className="">
+        <Spinner></Spinner>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -139,42 +165,58 @@ const JobType = () => {
         </Modal>
       </div>
       <div>
-      <div className="flex flex-col">
-  <div className=" ">
-    <div className="inline-block min-w-full py-2 ">
-      <div className="overflow-hidden">
-        <table className="min-w-full text-left text-sm font-light">
-          <thead className="border-b text-[18px] font-medium dark:border-neutral-500 ">
-            <tr>
-              <th scope="col" className="px-6 py-4">No</th>
-              <th scope="col" className="px-6 py-4">Job Type</th>
-              <th scope="col" className="px-6 py-4">Job Type ID</th>
-              <th scope="col" className="px-6 py-4">Action</th>
-             
-            </tr>
-          </thead>
-          {
-       jobType.map((job , i)=>
-            <tbody className="text-[15px]" key={job._id}>
-            <tr className="border-b dark:border-neutral-500">
-              <td className="whitespace-nowrap px-6 py-4 font-medium">{i+1}</td>
-              <td className="whitespace-nowrap px-6 py-4 font-medium">{job.worktype}</td>
-              <td className="whitespace-nowrap px-6 py-4 font-medium">{job._id}</td>
-              <td className="whitespace-nowrap px-6 py-4">
-              <button className="text-red" onClick={() => handelDeeted(job._id)} ><AiFillDelete ></AiFillDelete></button>
+        <div className="flex flex-col">
+          <div className=" ">
+            <div className="  py-10">
+              <div className="overflow-hidden">
+                <table className=" text-left text-sm font-light w-[1000px]">
+                  <thead className="border-b  bg-gray-100 text-[18px] font-medium">
+                    <tr className="ml-20">
+                      <th scope="col" className="px-6 py-4">
+                        No
+                      </th>
+                      <th scope="col" className="px-6 py-4">
+                        Job Type
+                      </th>
+                     
+                      <th scope="col" className="px-6 py-4 text-center">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
 
-              </td>
-            </tr>
-          </tbody>
-            
-            )
-          }
-       
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
+                  {jobType.map((job, index) => (
+                    <tbody className="text-[15px] mt-5" key={job._id}  onDragStart={(e) => (dragItem.current=index)}
+                    onDragEnter={(e) => (dragOverItem.current=index)}
+                    onDragEnd={handelSort}>
+                      <tr
+                        className="border-b my-2 bg-zinc-50 "
+                        draggable
+                       
+                      >
+                        <td className="whitespace-nowrap px-6 py-4 font-medium">
+                          {index + 1}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 font-medium">
+                          {job.worktype}
+                        </td>
+                      
+                        <td className="whitespace-nowrap px-6 py-4 text-center">
+                          <button
+                            className=""
+                            onClick={() => handelDeeted(job._id)}
+                          >
+                            <AiFillDelete className="text-red-500 "></AiFillDelete>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  ))}
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,8 +1,9 @@
 import { Button, Modal } from "antd";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiFillDelete , AiTwotoneEdit} from "react-icons/ai";
+import Spinner from "../../Spinner/Spinner";
 
 
 const AddSalaries = () => {
@@ -14,14 +15,14 @@ const AddSalaries = () => {
 
     useEffect(() => {
 
-        fetch("https://app.bringin.io/admin/salarie")
+        fetch("http://rsapp.bringin.io/admin/salarie")
           .then((res) => res.json())
           .then((data) => {
             setIsLoding(true);
             setSalaries(data);
             console.log(data);
           });
-      }, []);
+      }, [refresh]);
       console.log(salaries);
 
     const {
@@ -41,7 +42,7 @@ const AddSalaries = () => {
     
         };
     
-        fetch("https://app.bringin.io/salarietype", {
+        fetch("http://rsapp.bringin.io/salarietype", {
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -60,7 +61,7 @@ const AddSalaries = () => {
   const handelDeeted = id => {
     const proced = window.confirm('Are You Sure')
     if (proced) {
-        fetch(`https://app.bringin.io/admin/salarie/${id}`, {
+        fetch(`http://rsapp.bringin.io/admin/salarie/${id}`, {
             method: "DELETE",
         })
             .then(res => res.json())
@@ -87,6 +88,30 @@ const AddSalaries = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  const dragItem=useRef(null)
+  const dragOverItem=useRef(null)
+  const handelSort=()=>{
+    let _salaries =[...salaries]
+       //remove and save the dragged item content
+       const draggedItemContent = _salaries.splice(dragItem.current, 1)[0];
+       //switch the position
+       _salaries.splice(dragOverItem.current, 0, draggedItemContent);
+  
+      //reset the position ref
+      dragItem.current = null;
+      dragOverItem.current = null;
+  
+      //update the actual array
+      setSalaries(_salaries)
+  }
+
+
+  if (isLoding === false) {
+    return <div className="">
+      <Spinner></Spinner>
+    </div>;
+  }
     return (
         <div>
             
@@ -174,29 +199,31 @@ const AddSalaries = () => {
   <div className=" ">
     <div className="inline-block min-w-full py-2 ">
       <div className="overflow-hidden">
-        <table className="min-w-full text-left text-sm font-light">
-          <thead className="border-b text-[18px] font-medium dark:border-neutral-500 ">
+        <table className="min-w-full text-left text-sm font-light w-[1000px]">
+          <thead className="border-b text-[18px] bg-gray-100 font-medium dark:border-neutral-500 ">
             <tr>
               <th scope="col" className="px-6 py-4">No</th>
-              <th scope="col" className="px-6 py-4">Salary ID</th>
               <th scope="col" className="px-6 py-4"> Min Salary</th>
               <th scope="col" className="px-6 py-4">Max Salary Type</th>
               <th scope="col" className="px-6 py-4">Currency </th>
-              <th scope="col" className="px-6 py-4">Action</th>
+              <th scope="col" className="px-6 py-4 text-center">Action</th>
              
             </tr>
           </thead>
           {
        salaries.map((sa , i)=>
-            <tbody className="text-[15px]" key={sa._id}>
+            <tbody className="text-[15px] bg-gray-50" key={sa._id}
+            onDragStart={(e) => (dragItem.current=i)}
+            onDragEnter={(e) => (dragOverItem.current=i)}
+            onDragEnd={handelSort}  draggable
+            >
             <tr className="border-b dark:border-neutral-500">
               <td className="whitespace-nowrap px-6 py-4 font-medium">{i+1}</td>
-              <td className="whitespace-nowrap px-6 py-4 font-medium">{sa._id}</td>
-              <td className="whitespace-nowrap px-6 py-4 font-medium">{sa.min_salary}</td>
-              <td className="whitespace-nowrap px-6 py-4 font-medium">{sa.max_salary}</td>
+              <td className="whitespace-nowrap px-6 py-4 font-medium">{sa.min_salary}K</td>
+              <td className="whitespace-nowrap px-6 py-4 font-medium">{sa.max_salary}K</td>
               <td className="whitespace-nowrap px-6 py-4 font-medium">{sa.currency}</td>
-              <td className="whitespace-nowrap px-6 py-4">
-              <button className="text-red" onClick={() => handelDeeted(sa._id)} ><AiFillDelete ></AiFillDelete></button>
+              <td className="whitespace-nowrap px-6 py-4 text-center">
+              <button  className="" onClick={() => handelDeeted(sa._id)} ><AiFillDelete className="text-red-500 "></AiFillDelete></button>
 
               </td>
             </tr>

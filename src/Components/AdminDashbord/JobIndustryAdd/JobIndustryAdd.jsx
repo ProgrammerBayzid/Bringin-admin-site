@@ -1,10 +1,10 @@
 import { Button, Modal } from "antd";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { AiFillDelete, AiTwotoneEdit } from "react-icons/ai";
-import { Menu, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { AiFillDelete,  } from "react-icons/ai";
+
+import Spinner from "../../Spinner/Spinner";
 
 const JobIndustryAdd = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,14 +14,14 @@ const JobIndustryAdd = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://app.bringin.io/admin/industry")
+    fetch("http://rsapp.bringin.io/admin/industry")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
         setIndustry(data);
         console.log(data);
       });
-  }, []);
+  }, [refresh]);
   console.log(industry);
 
   const {
@@ -36,7 +36,7 @@ const JobIndustryAdd = () => {
       industryname: data.industryname,
     };
 
-    fetch("https://app.bringin.io/industryadd", {
+    fetch("http://rsapp.bringin.io/industryadd", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -54,7 +54,7 @@ const JobIndustryAdd = () => {
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
     if (proced) {
-      fetch(`https://app.bringin.io/admin/industry/${id}`, {
+      fetch(`http://rsapp.bringin.io/admin/industry/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -69,6 +69,28 @@ const JobIndustryAdd = () => {
     }
   };
 
+
+
+
+  const dragItem=useRef(null)
+const dragOverItem=useRef(null)
+
+
+const handelSort=()=>{
+  let _industry =[...industry]
+     //remove and save the dragged item content
+     const draggedItemContent = _industry.splice(dragItem.current, 1)[0];
+     //switch the position
+     _industry.splice(dragOverItem.current, 0, draggedItemContent);
+
+    //reset the position ref
+    dragItem.current = null;
+    dragOverItem.current = null;
+
+    //update the actual array
+    setIndustry(_industry)
+}
+
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -80,6 +102,10 @@ const JobIndustryAdd = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  if (isLoding === false) {
+    return <Spinner></Spinner>;
+  }
   return (
     <div>
       <div>
@@ -131,105 +157,62 @@ const JobIndustryAdd = () => {
           </Modal>
         </div>
       </div>
-    <div className="mt-10">
-    <div className="grid grid-cols-2 gap-5 ">
-        {industry.map((ins, i) => (
-          <div
-            key={ins._id}
-            className="relative flex w-full h-full flex-col rounded-xl bg-stone-200 bg-clip-border text-gray-700 shadow-md"
-          >
-        <div>
-          <div className="flex justify-between mx-5 mt-2">
-          <p className="mt-2"> NO. {i+1}</p>
-          <button className="text-red" onClick={() => handelDeeted(ins._id)} ><AiFillDelete ></AiFillDelete></button>
-
-          </div>
-        <div className="p-6">
+      
+      <div>
+      <div className="flex flex-col">
+  <div className=" mt-10">
+    <div className="inline-block  py-2 ">
+      <div className="overflow-hidden">
+        <table className=" text-left text-sm w-[1000px] font-light">
+          <thead className="border-b bg-gray-100 text-[18px] font-medium  ">
+            <tr>
+              <th scope="col" className="px-6 py-4">No</th>
+              <th scope="col" className="px-6 py-4">Industry</th>
+              <th scope="col" className="px-6 py-4">Categoris</th>
+              <th scope="col" className="px-6 py-4 text-center">Action</th>
+             
+            </tr>
+          </thead>
+          {
+       industry.map((ins , i)=>
+            <tbody className="text-[15px]" key={ins._id}     onDragStart={(e) => (dragItem.current=i)}
+            onDragEnter={(e) => (dragOverItem.current=i)}
+            onDragEnd={handelSort}  draggable >
+            <tr className="border-b bg-gray-50">
+              <td className="whitespace-nowrap px-6 py-4 font-medium">{i+1}</td>
+              <td className="whitespace-nowrap px-6 py-4 font-medium">
               <div>
-                <div className="">
-                  <table>
-                    <thead className="border text-[10px] ">
-                      <tr>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                        >
-                          Industry Name
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                        >
-                          Industry ID
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                      >
-                        {ins.industryname}
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                      >
-                        {ins._id}
-                      </th>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <hr></hr>
-              <div>
-                <div>
-                  <h1 className="text-center text-[13px] font-bold my-2">Industry Categoris</h1>
-                  <hr className="mx-10"></hr>
-                </div>
-                <table>
-                  <thead className="border text-[13px] ">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                      >
-                        Categoris Name
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                      >
-                        Categoris ID
-                      </th>
-                    </tr>
-                  </thead>
+                                <p className="my-2"> {ins.industryname}</p>
+                                
+                              </div>
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 font-medium">
+                {
+                  ins.category.map((ca)=>(
+                    <div key={ca._id}>
+                    <p className="my-2">{ca.categoryname}</p>
+                 
+                  </div>
+                  ))
+                }
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-center">
+              <button  onClick={() => handelDeeted(ins._id)} ><AiFillDelete className="text-red-500"></AiFillDelete></button>
 
-                  {ins.category.map((ca) => (
-                    <tbody key={ca._id}>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                      >
-                        {ca.categoryname}
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                      >
-                        {ca._id}
-                      </th>
-                    </tbody>
-                  ))}
-                </table>
-               
-              </div>
-            </div>
-        </div>
-          </div>
-        ))}
+              </td>
+            </tr>
+          </tbody>
+            
+            )
+          }
+       
+        </table>
       </div>
     </div>
+  </div>
+</div>
+      </div>
+
     </div>
   );
 };

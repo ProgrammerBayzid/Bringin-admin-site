@@ -49,7 +49,7 @@ function Dashboard() {
 
   return (
     <Space size={20} direction="vertical">
-      <Typography.Title size={4}>Dashboard</Typography.Title>
+      <h1 className="text-[20px] font-medium">Dashboard</h1>
       <Space direction="horizontal">
         <DashboardCard
           icon={

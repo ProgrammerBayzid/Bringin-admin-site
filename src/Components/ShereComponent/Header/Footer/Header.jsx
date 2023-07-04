@@ -11,7 +11,7 @@ function Header() {
 
 
   return (
-    <div className="App sticky top-0 z-40 App  bg-white App shadow-[1px_1px_10px_2px_rgb(245,244,244)]   shadow lg:py-2 md:py-2 py-5  mb-10">
+    <div className="App sticky top-0 z-40 App  bg-white App shadow-sm lg:py-2 md:py-2 py-5  ">
 
     <div className="flex items-center justify-between mx-10 ">
       <Image

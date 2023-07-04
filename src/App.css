@@ -118,18 +118,7 @@ border-bottom: 4px solid #0077B5;
   height: 75px; /* height of container */
   overflow: hidden;
 }
-.button:focus{
-  border-color: #0077B5;
-  background-color: white;
-  color: #0077B5;
-}
-.button:active{
-  transform: translateY(2px);
-}
-.li:focus{
-  color:  #0077B5;
-}
-.li:active{
-  transform: translateY(2px);
 
+.active{
+  color: #0077B5;
 }

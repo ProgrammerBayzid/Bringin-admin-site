@@ -1,29 +1,42 @@
  
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import i1 from '../../assets/about/Group 11884.svg'
 import { MdOutlineDashboardCustomize,MdOutlineFeaturedPlayList, } from "react-icons/md";
+import App from "../../App.css";
+
 const SideNav = () => {
     const [open, setOpen] = useState(true);
     const Menus = [
-      { title: <Link to='/'>Dashboard</Link>, icon: <MdOutlineDashboardCustomize></MdOutlineDashboardCustomize> },
-      {title: <Link to='/customer'>Customers</Link>, icon: <MdOutlineFeaturedPlayList/>},
-      {title: <Link to='/jobetype'>Job Type</Link>, icon: <MdOutlineFeaturedPlayList/>},
-      {title: <Link to='/industryadd'>Industry Name</Link>, icon: <MdOutlineFeaturedPlayList/>},
-      {title: <Link to='/categoryadd'>Categories </Link>, icon: <MdOutlineFeaturedPlayList/>},
-      {title: <Link to='/functionalareaadd'>Expertise Area </Link>, icon: <MdOutlineFeaturedPlayList/>},
-      {title: <Link to='/locationadd'>Location </Link>, icon: <MdOutlineFeaturedPlayList/>},
-      {title: <Link to='/salaries'>Salaries </Link>, icon: <MdOutlineFeaturedPlayList/>},
-      {title: <Link to='/educationlavel'>Educational Level </Link>, icon: <MdOutlineFeaturedPlayList/>},
-      {title: <Link to='/digree'>Degree</Link>, icon: <MdOutlineFeaturedPlayList/>},
-      {title: <Link to='/subject'>Subject </Link>, icon: <MdOutlineFeaturedPlayList/>},
+      { title: <NavLink to='/'>Dashboard</NavLink>, icon: <MdOutlineDashboardCustomize></MdOutlineDashboardCustomize> },
+      {title: <NavLink to='/customer'>Customers</NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/jobetype'>Job Type</NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/industryadd'>Industry Name</NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/categoryadd'>Categories </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/functionalareaadd'>Expertise Area </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/locationadd'>Location </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/salaries'>Salaries </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/educationlavel'>Educational Level </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/digree'>Degree</NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/subject'>Subject </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/skill'>Skill </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/companyname'>Company Name </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/companysize'>Company Size </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/department'>Department </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/jobtitle'>Job Title </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/candidatereport'>Repoted Candidate </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/job_report'>Repoted Job </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/premium_user'>Premium User  </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/not_premium_user'>Not Premium User </NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/company_varify'>Company Verify</NavLink>, icon: <MdOutlineFeaturedPlayList/>},
+      {title: <NavLink to='/profile_varify'>Profile Verify</NavLink>, icon: <MdOutlineFeaturedPlayList/>},
     ];
     return (
-        <div className=" App">
+        <div className=" ">
         <div
           className={` ${
             open ? "w-72" : "w-20 "
-          } bg-dark-purple h-screen p-5  pt-8 relative duration-300 shadow-lg my-10`}
+          } bg-dark-purple  shadow-sm relative duration-300  `}
         >
           <img
             src={i1}
@@ -32,32 +45,13 @@ const SideNav = () => {
             onClick={() => setOpen(!open)}
           />
           
-          <div className="flex gap-x-4 items-center">
-{/*             
-            <img
-            src={b}
-           
-            className={`w-10 cursor-pointer duration-500 ${
-              open && "rotate-[360deg]"
-            }`}
-            
-            >
-
-            </img> */}
-            <h1
-              className={`text-[#0077B5] origin-left font-semibold text-[30px] duration-200 ${
-                !open && "scale-0"
-              }`}
-            >
-              Bringin
-            </h1>
-          </div>
-          <ul className="pt-6">
+          
+          <ul className="App">
             {Menus.map((Menu, index) => (
               <li
                 key={index}
-                className={`flex  rounded-md p-2 cursor-pointer hover:text-[#0077B5] text-black text-[17px] items-center gap-x-4 
-                ${Menu.gap ? "mt-9" : "mt-2"} ${
+                className={`flex  rounded-md p-[7px] cursor-pointer hover:text-[#0077B5] text-black text-[15px] font-medium items-center gap-x-2 
+                ${Menu.gap ? "mt-" : "mt-"} ${
                   index === 0 && "hover:text-[#0077B5]"
                 } `}
               >

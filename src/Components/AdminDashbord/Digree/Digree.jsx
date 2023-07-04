@@ -1,25 +1,26 @@
 import { Button, Modal } from "antd";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiFillDelete, AiTwotoneEdit } from "react-icons/ai";
+import Spinner from "../../Spinner/Spinner";
 
 const Digree = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [digree, setDigree] = useState([]);
   const [refresh, setRefresh] = useState(true);
   const [isLoding, setIsLoding] = useState(false);
-
+  
+  const [digree, setDigree] = useState([]);
   useEffect(() => {
-    fetch("https://app.bringin.io/admin/digree")
+    fetch("http://rsapp.bringin.io/admin/digree")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
         setDigree(data);
         console.log(data);
       });
-  }, []);
+  }, [refresh]);
   console.log(digree);
 
   const {
@@ -35,7 +36,7 @@ const Digree = () => {
       education: data.education,
     };
 
-    fetch("https://app.bringin.io/digree_add", {
+    fetch("http://rsapp.bringin.io/digree_add", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -53,7 +54,7 @@ const Digree = () => {
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
     if (proced) {
-      fetch(`https://app.bringin.io/admin/digree/${id}`, {
+      fetch(`http://rsapp.bringin.io/admin/digree/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -79,12 +80,46 @@ const Digree = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  const dragItem=useRef(null)
+  const dragOverItem=useRef(null)
+  const handelSort=()=>{
+    let _digree =[...digree]
+       //remove and save the dragged item content
+       const draggedItemContent = _digree.splice(dragItem.current, 1)[0];
+       //switch the position
+       _digree.splice(dragOverItem.current, 0, draggedItemContent);
+  
+      //reset the position ref
+      dragItem.current = null;
+      dragOverItem.current = null;
+  
+      //update the actual array
+      setDigree(_digree)
+  }
+  const [educationlavel, setEducationlavel] = useState([]);
+  useEffect(() => {
+    fetch("http://rsapp.bringin.io/education_lavel")
+      .then((res) => res.json())
+      .then((data) => {
+        setIsLoding(true);
+        setEducationlavel(data);
+        console.log(data);
+      });
+  }, []);
+  console.log(educationlavel);
+
+  if (isLoding === false) {
+    return <div className="">
+      <Spinner></Spinner>
+    </div>;
+  }
   return (
     <div>
       <div>
         <div>
           <Button className="bg-[#0077B5] btn" onClick={showModal}>
-            Add Digree
+            Add Degree
           </Button>
         </div>
         <div>
@@ -101,7 +136,7 @@ const Digree = () => {
                     <div className="form-control w-full ">
                       <label className="label">
                         {" "}
-                        <span className="label-text">Digree Name</span>
+                        <span className="label-text">Degree Name</span>
                       </label>
                       <input
                         type="text"
@@ -110,28 +145,28 @@ const Digree = () => {
                         })}
                         className="input input-bordered w-full "
                       />
-                      {errors.phoneName && (
+                      {errors.name && (
                         <p className="text-red-500">{errors.name.message}</p>
                       )}
                     </div>
                     <div className="form-control w-full ">
                       <label className="label">
                         {" "}
-                        <span className="label-text">Education Id</span>
+                        <span className="label-text">Select a Education </span>
                       </label>
-                      <input
-                        type="text"
-                        {...register("education", {
-                          required: "  education is Required",
+                      <select
+                        {...register("education")}
+                        className="select input-bordered w-full "
+                      >
+                        {educationlavel.map((ca) => {
+
+                          return (
+                            <option value={ca._id} key={ca._id}>{ca.name}</option>
+                          );
                         })}
-                        className="input input-bordered w-full "
-                      />
-                      {errors.phoneName && (
-                        <p className="text-red-500">
-                          {errors.education.message}
-                        </p>
-                      )}
-                    </div>
+                      </select>
+                    </div>                                                                                                                                                                                                                                                  
+                
                     <input
                       className="shadow-lg rounded lg:text-[20px] md:text-[18] text-[16px] font-bold text-white px-3  bg-[#0077B5] cursor-pointer lg:py-4 md:py-3 py-[6px] w-full mt-4"
                       value="Add "
@@ -147,171 +182,85 @@ const Digree = () => {
       </div>
       <div>
         <div>
-          <div className="mt-10">
-            <div className="grid grid-cols-2 gap-5 ">
-              {digree.map((di, i) => (
-                <div
-                  key={di._id}
-                  className="relative flex w-full h-full flex-col rounded-xl bg-stone-200 bg-clip-border text-gray-700 shadow-md"
-                >
-                  <div>
-                    <div className="flex justify-between mx-5 mt-2">
-                      <p className="mt-2"> NO. {i + 1}</p>
-                      <button
-                        className="text-red"
-                        onClick={() => handelDeeted(di._id)}
-                      >
-                        <AiFillDelete></AiFillDelete>
-                      </button>
-                    </div>
-                    <div className="p-6">
-                      <div>
-                        <div className="">
-                          <table>
-                            <thead className="border text-[10px] ">
-                              <tr>
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                                >
-                                  Digree Name
-                                </th>
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                                >
-                                  Digree ID
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <th
-                                scope="col"
-                                className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                              >
-                                {di.name}
-                              </th>
-                              <th
-                                scope="col"
-                                className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                              >
-                                {di._id}
-                              </th>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                      <hr></hr>
-                      <div>
-                        <div>
-                          <h1 className="text-center text-[13px] font-bold my-2">
+          <div>
+            <div className="flex flex-col">
+              <div className=" ">
+                <div className="inline-block min-w-full py-2 ">
+                  <div className="overflow-hidden">
+                    <table className="min-w-full text-left w-[1000px] text-sm font-light">
+                      <thead className="border-b text-[18px] bg-gray-100 font-medium dark:border-neutral-500 ">
+                        <tr>
+                          <th scope="col" className="px-6 py-4">
+                            No
+                          </th>
+                          <th scope="col" className="px-6 py-4">
+                            Digree
+                          </th>
+                          <th scope="col" className="px-6 py-4">
                             Subject
-                          </h1>
-                          <hr className="mx-10"></hr>
-                        </div>
-                        <table>
-                          <thead className="border text-[13px] ">
-                            <tr>
-                              <th
-                                scope="col"
-                                className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                              >
-                                Subject Name
-                              </th>
-                              <th
-                                scope="col"
-                                className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                              >
-                                Subject ID
-                              </th>
-                            </tr>
-                          </thead>
-
-                          {di.subject.map((su) => (
-                            <tbody key={su._id}>
-                              <th
-                                scope="col"
-                                className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                              >
-                                {su.name}
-                              </th>
-                              <th
-                                scope="col"
-                                className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                              >
-                                {su._id}
-                              </th>
-                            </tbody>
-                          ))}
-                        </table>
-                      </div>
-                      <div>
-                        <div>
-                          <h1 className="text-center text-[13px] font-bold my-2">
+                          </th>
+                          <th scope="col" className="px-6 py-4">
                             Education
-                          </h1>
-                          <hr className="mx-10"></hr>
-                        </div>
-                        <table>
-                          <thead className="border text-[13px] ">
-                            <tr>
-                              <th
-                                scope="col"
-                                className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
+                          </th>
+                          <th scope="col" className="px-6 py-4 text-center">
+                            Action
+                          </th>
+                        </tr>
+                      </thead>
+                      {digree.map((di, i) => (
+                        <tbody className="text-[15px] bg-gray-50" key={di._id}   
+                        onDragStart={(e) => (dragItem.current=i)}
+                        onDragEnter={(e) => (dragOverItem.current=i)}
+                        onDragEnd={handelSort}  draggable
+                        >
+                          <tr className="border-b dark:border-neutral-500">
+                            <td className="whitespace-nowrap px-6 py-4 font-medium">
+                              {i + 1}
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 font-medium">
+                              <div>
+                                <p className="my-2"> {di.name}</p>
+                            
+                              </div>
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 font-medium">
+                              {di.subject.map((su) => (
+                                <div key={su._id}>
+                                  {su?.name ? 
+                                    <p className="my-2"> {su.name}</p>
+                                   : 
+                                    <p>Null</p>
+                                  }
+                                </div>
+                              ))}
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 font-medium">
+                              <div>
+                                {di?.educaton?.name ? (
+                                  <p className="my-2">
+                                     {di.educaton.name}
+                                  </p>
+                                ) : (
+                                  <p>Null</p>
+                                )}
+                              
+                              </div>
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 text-center">
+                              <button
+                              
+                                onClick={() => handelDeeted(di._id)}
                               >
-                                Education Name
-                              </th>
-                              <th
-                                scope="col"
-                                className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                              >
-                                Education ID
-                              </th>
-                            </tr>
-                          </thead>
-                         
-
-                          {/* { di?.education?.map((ed) => (
-                            <tbody key={ed._id}>
-                              {ed?.name ? (
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                                >
-                                  {ed?.name}
-                                </th>
-                              ) : (
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                                >
-                                  null
-                                </th>
-                              )}
-
-                              {ed?._id ? (
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                                >
-                                  {ed?._id}
-                                </th>
-                              ) : (
-                                <th
-                                  scope="col"
-                                  className="px-6 py-3 border-[1px] border-[#6A6A6A] text-[#454545]   lg:text-[13px] md:text-[13px]"
-                                >
-                                  null
-                                </th>
-                              )}
-                            </tbody>
-                          ))} */}
-                        </table>
-                      </div>
-                    </div>
+                                <AiFillDelete   className="text-red-500"></AiFillDelete>
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      ))}
+                    </table>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>

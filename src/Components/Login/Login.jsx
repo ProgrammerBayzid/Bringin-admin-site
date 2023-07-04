@@ -17,7 +17,7 @@ const Login = () => {
       password: data.password,
     };
 
-    fetch("https://app.bringin.io/signin", {
+    fetch("http://rsapp.bringin.io/signin", {
       method: "POST",
       headers: {
         "content-type": "application/json",
