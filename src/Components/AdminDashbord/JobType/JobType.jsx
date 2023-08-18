@@ -13,7 +13,7 @@ const JobType = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("http://rsapp.bringin.io/admin/jobtype")
+    fetch("https://rsapp.bringin.io/admin/jobtype")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -36,7 +36,7 @@ const JobType = () => {
       published_date: new Date().toLocaleString(),
     };
 
-    fetch("http://rsapp.bringin.io/jobtype", {
+    fetch("https://rsapp.bringin.io/jobtype", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -57,7 +57,7 @@ const JobType = () => {
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
     if (proced) {
-      fetch(`http://rsapp.bringin.io/admin/jobtype/${id}`, {
+      fetch(`https://rsapp.bringin.io/admin/jobtype/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())

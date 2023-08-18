@@ -120,5 +120,9 @@ border-bottom: 4px solid #0077B5;
 }
 
 .active{
-  color: #0077B5;
+  color: white;
+  background-color: #0077B5;
+  border: 5px;
+
 }
+

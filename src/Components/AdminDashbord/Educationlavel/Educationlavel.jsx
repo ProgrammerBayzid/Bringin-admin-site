@@ -4,21 +4,22 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiFillDelete, AiTwotoneEdit } from "react-icons/ai";
 import Spinner from "../../Spinner/Spinner";
+import EducationlavelEdit from "./EducationlavelEdit";
 
 const Educationlavel = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [refresh, setRefresh] = useState(true);
   const [isLoding, setIsLoding] = useState(false);
-  
+
   const [educationlavel, setEducationlavel] = useState([]);
   useEffect(() => {
-    fetch("http://rsapp.bringin.io/education_lavel")
+    fetch("https://rsapp.bringin.io/education_lavel")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
         setEducationlavel(data);
-        console.log(data);                                                                        
+        console.log(data);
       });
   }, [refresh]);
   console.log(educationlavel);
@@ -35,7 +36,7 @@ const Educationlavel = () => {
       name: data.name,
     };
 
-    fetch("http://rsapp.bringin.io/education_lavel", {
+    fetch("https://rsapp.bringin.io/education_lavel", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -53,7 +54,7 @@ const Educationlavel = () => {
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
     if (proced) {
-      fetch(`http://rsapp.bringin.io/admin/education_lavel/${id}`, {
+      fetch(`https://rsapp.bringin.io/admin/education_lavel/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -80,28 +81,56 @@ const Educationlavel = () => {
     setIsModalOpen(false);
   };
 
-  const dragItem=useRef(null)
-  const dragOverItem=useRef(null)
-  const handelSort=()=>{
-    let _educationlavel =[...educationlavel]
-       //remove and save the dragged item content
-       const draggedItemContent = _educationlavel.splice(dragItem.current, 1)[0];
-       //switch the position
-       _educationlavel.splice(dragOverItem.current, 0, draggedItemContent);
-  
-      //reset the position ref
-      dragItem.current = null;
-      dragOverItem.current = null;
-  
-      //update the actual array
-      setEducationlavel(_educationlavel)
-  }
+  const dragItem = useRef(null);
+  const dragOverItem = useRef(null);
+  const handelSort = () => {
+    let _educationlavel = [...educationlavel];
+    //remove and save the dragged item content
+    const draggedItemContent = _educationlavel.splice(dragItem.current, 1)[0];
+    //switch the position
+    _educationlavel.splice(dragOverItem.current, 0, draggedItemContent);
 
+    //reset the position ref
+    dragItem.current = null;
+    dragOverItem.current = null;
+
+    //update the actual array
+    setEducationlavel(_educationlavel);
+  };
+
+  const [edit, setEdit] = useState(null);
+
+  const closeModal = () => {
+    setEdit(null);
+  };
+
+  const editeducation = (data, e) => {
+    // console.log(data);
+    const editdata = {
+      name: data.name,
+    };
+
+    fetch(`https://rsapp.bringin.io/education_update/${edit._id}`, {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(editdata),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        setRefresh(!refresh);
+        e.target.reset();
+        console.log(result);
+      });
+  };
 
   if (isLoding === false) {
-    return <div className="">
-      <Spinner></Spinner>
-    </div>;
+    return (
+      <div className="">
+        <Spinner></Spinner>
+      </div>
+    );
   }
   return (
     <div>
@@ -169,16 +198,22 @@ const Educationlavel = () => {
                         <th scope="col" className="px-6 py-4">
                           Digree
                         </th>
+                        <th scope="col" className="px-6 py-4 text-">
+                          Edit
+                        </th>
                         <th scope="col" className="px-6 py-4 text-center">
-                          Action
+                          Delete
                         </th>
                       </tr>
                     </thead>
                     {educationlavel.map((edu, i) => (
-                      <tbody className="text-[15px] bg-gray-50" key={edu._id}
-                      onDragStart={(e) => (dragItem.current=i)}
-                      onDragEnter={(e) => (dragOverItem.current=i)}
-                      onDragEnd={handelSort}  draggable
+                      <tbody
+                        className="text-[15px] bg-gray-50"
+                        key={edu._id}
+                        onDragStart={(e) => (dragItem.current = i)}
+                        onDragEnter={(e) => (dragOverItem.current = i)}
+                        onDragEnd={handelSort}
+                        draggable
                       >
                         <tr className="border-b dark:border-neutral-500">
                           <td className="whitespace-nowrap px-6 py-4 font-medium">
@@ -187,22 +222,26 @@ const Educationlavel = () => {
                           <td className="whitespace-nowrap px-6 py-4 font-medium">
                             <div>
                               <p className="my-2">{edu.name}</p>
-                            
                             </div>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 font-medium">
                             {edu.digree.map((di) => (
                               <div key={di._id}>
                                 <p className="my-2">{di.name}</p>
-
                               </div>
                             ))}
                           </td>
-                          <td className="whitespace-nowrap px-6 py-4 text-center">
-                            <button
-                              
-                              onClick={() => handelDeeted(edu._id)}
+                          <td>
+                            <label
+                              onClick={() => setEdit(edu)}
+                              htmlFor="education-modal"
+                              className="btn btn-sm btn-error"
                             >
+                              Edit
+                            </label>
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4 text-center">
+                            <button onClick={() => handelDeeted(edu._id)}>
                               <AiFillDelete className="text-red-500"></AiFillDelete>
                             </button>
                           </td>
@@ -216,6 +255,19 @@ const Educationlavel = () => {
           </div>
         </div>
       </div>
+
+      {edit && (
+        <EducationlavelEdit
+          title={`Are you sure you want to edit?`}
+          message={`Do you want to edit ${edit.name}.`}
+          successButtonName="Delete"
+          modalData={edit}
+          add={editeducation}
+          closeModal={closeModal}
+        >
+          {" "}
+        </EducationlavelEdit>
+      )}
     </div>
   );
 };

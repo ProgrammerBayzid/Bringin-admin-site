@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { AiFillDelete, AiTwotoneEdit } from "react-icons/ai";
 import Spinner from "../../Spinner/Spinner";
+import CompanysizeEditModal from "./CompanysizeEditModal";
 
 const CompanySize = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,7 +13,7 @@ const CompanySize = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("http://rsapp.bringin.io/admincompanysize")
+    fetch("https://rsapp.bringin.io/admincompanysize")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -31,12 +32,11 @@ const CompanySize = () => {
   const addCompanySize = (data, e) => {
     // console.log(data);
     const companySizedata = {
-      min: data.min,
-      max: data.max,
+      size: data.size,
       published_date: new Date().toLocaleString(),
     };
 
-    fetch("http://rsapp.bringin.io/admincompanysize", {
+    fetch("https://rsapp.bringin.io/companySize_add", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -56,7 +56,7 @@ const CompanySize = () => {
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
     if (proced) {
-      fetch(`http://rsapp.bringin.io/admincompanysize/${id}`, {
+      fetch(`https://rsapp.bringin.io/admincompanysize/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -82,33 +82,55 @@ const CompanySize = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  
 
-  const dragItem=useRef(null)
-const dragOverItem=useRef(null)
-const handelSort=()=>{
-  let _companysize =[...companysize]
-     //remove and save the dragged item content
-     const draggedItemContent = _companysize.splice(dragItem.current, 1)[0];
-     //switch the position
-     _companysize.splice(dragOverItem.current, 0, draggedItemContent);
+  const dragItem = useRef(null);
+  const dragOverItem = useRef(null);
+  const handelSort = () => {
+    let _companysize = [...companysize];
+    //remove and save the dragged item content
+    const draggedItemContent = _companysize.splice(dragItem.current, 1)[0];
+    //switch the position
+    _companysize.splice(dragOverItem.current, 0, draggedItemContent);
 
     //reset the position ref
     dragItem.current = null;
     dragOverItem.current = null;
 
     //update the actual array
-    setCompanySize(_companysize)
-}
+    setCompanySize(_companysize);
+  };
 
+  const [edit, setEdit] = useState(null);
+  const closeModal = () => {
+    setEdit(null);
+  };
+  const editcompanysize = (data, e) => {
+    // console.log(data);
+    const editdata = {
+      size: data.size,
+    };
 
-  // if (isLoding === false) {
-  //   return (
-  //     <div className="">
-  //       <Spinner></Spinner>
-  //     </div>
-  //   );
-  // }
+    fetch(`https://rsapp.bringin.io/company_size_update/${edit._id}`, {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(editdata),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        setRefresh(!refresh);
+        e.target.reset();
+        console.log(result);
+      });
+  };
+  if (isLoding === false) {
+    return (
+      <div className="">
+        <Spinner></Spinner>
+      </div>
+    );
+  }
   return (
     <div className="w-full">
       <div>
@@ -133,33 +155,15 @@ const handelSort=()=>{
                   <div className="form-control w-full ">
                     <label className="label">
                       {" "}
-                      <span className="label-text">Company Size min</span>
+                      <span className="label-text">Company Size </span>
                     </label>
                     <input
                       type="text"
-                      {...register("min", {
-                        required: "  min is Required",
-                      })}
+                      {...register("size", {})}
                       className="input input-bordered w-full "
                     />
-                    {errors.name && (
-                      <p className="text-red-500">{errors.min.message}</p>
-                    )}
-                  </div>
-                  <div className="form-control w-full ">
-                    <label className="label">
-                      {" "}
-                      <span className="label-text">Company Size max</span>
-                    </label>
-                    <input
-                      type="text"
-                      {...register("max", {
-                        required: "  max is Required",
-                      })}
-                      className="input input-bordered w-full "
-                    />
-                    {errors.name && (
-                      <p className="text-red-500">{errors.max.message}</p>
+                    {errors.size && (
+                      <p className="text-red-500">{errors.size.message}</p>
                     )}
                   </div>
 
@@ -187,45 +191,46 @@ const handelSort=()=>{
                         No
                       </th>
                       <th scope="col" className="px-6 py-4">
-                        Min
+                        Size
+                      </th>
+
+                      <th scope="col" className="px-6 py-4">
+                        Edit
                       </th>
                       <th scope="col" className="px-6 py-4">
-                        Max
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        {" "}
-                        ID
-                      </th>
-                      <th scope="col" className="px-6 py-4">
-                        Action
+                        Delete
                       </th>
                     </tr>
                   </thead>
                   {companysize.map((cs, i) => (
-                    <tbody className="text-[15px] bg-50" key={cs._id}
-                    onDragStart={(e) => (dragItem.current=i)}
-                    onDragEnter={(e) => (dragOverItem.current=i)}
-                    onDragEnd={handelSort}  draggable
+                    <tbody
+                      className="text-[15px] bg-50"
+                      key={cs._id}
+                      onDragStart={(e) => (dragItem.current = i)}
+                      onDragEnter={(e) => (dragOverItem.current = i)}
+                      onDragEnd={handelSort}
+                      draggable
                     >
                       <tr className="border-b dark:border-neutral-500">
                         <td className="whitespace-nowrap px-6 py-4 font-medium">
                           {i + 1}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 font-medium">
-                          {cs.min}
+                          {cs.size}
                         </td>
+
                         <td className="whitespace-nowrap px-6 py-4 font-medium">
-                          {cs.max}
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4 font-medium">
-                          {cs._id}
+                          <label
+                            onClick={() => setEdit(cs)}
+                            htmlFor="companysize-modal"
+                            className="btn btn-sm btn-error"
+                          >
+                            Edit
+                          </label>
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-center">
-                          <button
-                           
-                            onClick={() => handelDeeted(cs._id)}
-                          >
-                            <AiFillDelete  className="text-red-500"></AiFillDelete>
+                          <button onClick={() => handelDeeted(cs._id)}>
+                            <AiFillDelete className="text-red-500"></AiFillDelete>
                           </button>
                         </td>
                       </tr>
@@ -237,6 +242,18 @@ const handelSort=()=>{
           </div>
         </div>
       </div>
+      {edit && (
+        <CompanysizeEditModal
+          title={`Are you sure you want to edit?`}
+          message={`Do you want to edit ${edit.name}.`}
+          successButtonName="Delete"
+          modalData={edit}
+          add={editcompanysize}
+          closeModal={closeModal}
+        >
+          {" "}
+        </CompanysizeEditModal>
+      )}
     </div>
   );
 };

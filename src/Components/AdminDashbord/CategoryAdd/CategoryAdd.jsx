@@ -2,8 +2,9 @@ import { Button, Modal } from "antd";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { AiFillDelete,  } from "react-icons/ai";
+import { AiFillDelete } from "react-icons/ai";
 import Spinner from "../../Spinner/Spinner";
+import CatagoryEditModel from "./CatagoryEditModel";
 // import Select from 'react-select'
 
 const CategoryAdd = () => {
@@ -14,7 +15,7 @@ const CategoryAdd = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("http://rsapp.bringin.io/admin/category")
+    fetch("https://rsapp.bringin.io/admin/category")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -37,7 +38,7 @@ const CategoryAdd = () => {
       industryid: data.industryid,
     };
 
-    fetch("http://rsapp.bringin.io/categoryadd", {
+    fetch("https://rsapp.bringin.io/categoryadd", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -55,7 +56,7 @@ const CategoryAdd = () => {
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
     if (proced) {
-      fetch(`http://rsapp.bringin.io/admin/category/${id}`, {
+      fetch(`https://rsapp.bringin.io/admin/category/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -102,7 +103,7 @@ const CategoryAdd = () => {
   const [industry, setIndustry] = useState([]);
 
   useEffect(() => {
-    fetch("http://rsapp.bringin.io/admin/industry")
+    fetch("https://rsapp.bringin.io/admin/industry")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -120,8 +121,33 @@ const CategoryAdd = () => {
   //   { value: 'strawberry', label: 'Strawberry' },
   //   { value: 'vanilla', label: 'Vanilla' }
   // ]
-  
-  
+
+  const [edit, setEdit] = useState(null);
+
+  const closeModal = () => {
+    setEdit(null);
+  };
+
+  const editcatagory = (data, e) => {
+    // console.log(data);
+    const editdata = {
+      categoryname: data.categoryname,
+    };
+
+    fetch(`https://rsapp.bringin.io/category_update/${edit._id}`, {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(editdata),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        setRefresh(!refresh);
+        e.target.reset();
+        console.log(result);
+      });
+  };
   if (isLoding === false) {
     return (
       <div className="">
@@ -176,9 +202,10 @@ const CategoryAdd = () => {
                         className="select input-bordered w-full "
                       >
                         {industry.map((ca) => {
-
                           return (
-                            <option value={ca._id} key={ca._id}>{ca.industryname}</option>
+                            <option value={ca._id} key={ca._id}>
+                              {ca.industryname}
+                            </option>
                           );
                         })}
                       </select>
@@ -201,9 +228,9 @@ const CategoryAdd = () => {
         <div>
           <div className="flex flex-col">
             <div className=" ">
-              <div className="inline-block min-w-full py-2 ">
+              <div className=" inline-block py-2 ">
                 <div className="overflow-hidden">
-                  <table className="min-w-full text-left text-sm font-light w-[1000px] ">
+                  <table className=" text-left text-sm font-light  ">
                     <thead className="border-b bg-gray-100 text-[18px] font-medium dark:border-neutral-500 ">
                       <tr>
                         <th scope="col" className="px-6 py-4">
@@ -221,8 +248,11 @@ const CategoryAdd = () => {
                           {" "}
                           Industry
                         </th>
+                        <th scope="col" className="px-6 py-4  text-">
+                          Edit
+                        </th>
                         <th scope="col" className="px-6 py-4  text-center">
-                          Action
+                          Delete
                         </th>
                       </tr>
                     </thead>
@@ -242,16 +272,12 @@ const CategoryAdd = () => {
                           <td className="whitespace-nowrap px-6 py-4 font-medium">
                             <div>
                               <p className="my-2"> {ca.categoryname}</p>
-                            
                             </div>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 font-medium">
-                            {ca.functionarea.map((fu, ) => (
+                            {ca.functionarea.map((fu) => (
                               <div key={fu._id}>
-                                <p className="my-2">
-                                   {fu.functionalname}
-                                </p>
-                                
+                                <p className="my-2">{fu.functionalname}</p>
                               </div>
                             ))}
                           </td>
@@ -259,20 +285,28 @@ const CategoryAdd = () => {
                             <div>
                               {ca?.industryid?.industryname ? (
                                 <p className="my-2">
-                                   {ca?.industryid?.industryname}
+                                  {ca?.industryid?.industryname}
                                 </p>
                               ) : (
                                 <p>Null</p>
                               )}
-                          
                             </div>
+                          </td>
+                          <td>
+                            <label
+                              onClick={() => setEdit(ca)}
+                              htmlFor="categoryname-modal"
+                              className="btn btn-sm btn-error"
+                            >
+                              Edit
+                            </label>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 text-center">
                             <button
                               className="text-red"
                               onClick={() => handelDeeted(ca._id)}
                             >
-                              <AiFillDelete  className="text-red-500"></AiFillDelete>
+                              <AiFillDelete className="text-red-500"></AiFillDelete>
                             </button>
                           </td>
                         </tr>
@@ -285,6 +319,19 @@ const CategoryAdd = () => {
           </div>
         </div>
       </div>
+
+      {edit && (
+        <CatagoryEditModel
+          title={`Are you sure you want to edit?`}
+          message={`Do you want to edit ${edit.categoryname}.`}
+          successButtonName="Delete"
+          modalData={edit}
+          add={editcatagory}
+          closeModal={closeModal}
+        >
+          {" "}
+        </CatagoryEditModel>
+      )}
     </div>
   );
 };

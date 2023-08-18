@@ -31,171 +31,311 @@ import CompanyVerify from "../Components/AdminDashbord/CompanyVerify/CompanyVeri
 import CompanyVerifyDetails from "../Components/AdminDashbord/CompanyVerify/CompanyVerifyDetails";
 import ProfileVerify from "../Components/AdminDashbord/ProfileVerify/ProfileVerify";
 import ProfileVerifyDetails from "../Components/AdminDashbord/ProfileVerify/ProfileVerifyDetails";
+import Experince from "../Components/AdminDashbord/Experince/Experince";
+import CityName from "../Components/AdminDashbord/CityName/CityName";
+import RecruterReportDetails from "../Components/AdminDashbord/RecruterReport/RecruterReportDetails";
+import Category from "../Components/AdminDashbord/Category/Category";
+import Sub_Catagory from "../Components/AdminDashbord/Sub_Catagory/Sub_Catagory";
+import SingUp from "../Components/Login/SingUp";
+import Home from "../Components/AdminDashbord/Home/Home";
+import Profile from "../Components/AdminDashbord/Profile/Profile";
+import AllAdminUser from "../Components/AdminDashbord/AllAdminUser/AllAdminUser";
+import PrivetRoute from "../PrivetRoute/PrivetRoute";
+import AdminRouter from "../PrivetRoute/AdminRoute";
+import AppPrivet from "../PrivetRoute/AppPrivet";
+import WebPrivet from "../PrivetRoute/WebPrivet";
+import Post from "../Components/WebAdminDashbord/Post";
+import AllBlogs from "../Components/WebAdminDashbord/AllBlogs";
+import AddCategory from "../Components/WebAdminDashbord/AddCategory";
+import AllCategory from "../Components/WebAdminDashbord/AllCategory";
+import Bringinfeatured from "../Components/WebAdminDashbord/Bringinfeatured";
+import AllBringinfeatured from "../Components/WebAdminDashbord/AllBringinfeatured";
+import InfluencersOpinion from "../Components/WebAdminDashbord/InfluencersOpinion";
+import Allinfuencers from "../Components/WebAdminDashbord/Allinfuencers";
+import Review from "../Components/WebAdminDashbord/Review";
+import AllReview from "../Components/WebAdminDashbord/AllReview";
+import Cities from "../Components/WebAdminDashbord/Cities";
+import Comment from "../Components/WebAdminDashbord/Comment";
+import Imgs from "../Components/WebAdminDashbord/imgs";
+import ReacruterLayout from "../Dashboard/ReacruterLayout";
+import VarifyProfile from "../Components/AdminDashbord/VarifyProfile/VarifyProfile";
+import CandidateList from "../Components/AdminDashbord/CandidateList/CandidateList";
+import CandidateDetails from "../Components/AdminDashbord/CandidateList/CandidateDetails";
+import RejectRecureter from "../Components/AdminDashbord/RejectRecureter/RejectRecureter";
+
+export const route = createBrowserRouter([
+  {
+    path: "/",
+    element: <Main></Main>,
+    children: [
+      {
+        path: "/",
+        element:<PrivetRoute><Home /></PrivetRoute>,
+      },
+      {
+        path: "/home",
+        element: <PrivetRoute><Home /></PrivetRoute> ,
+      },
+      {
+        path: "/login",
+        element: <Login></Login>,
+      },
+      {
+        path: "/singup",
+        element: <SingUp></SingUp>,
+      },
+      {
+        path:"/profile",
+        element:<PrivetRoute><Profile></Profile></PrivetRoute> 
+      }
+    ],
+  },
+
+  {
+    path: "/verification",
+    element: <ReacruterLayout></ReacruterLayout>,
+    children:[
+      {
+        path: "/verification/profile_varify",
+        element:<AppPrivet><ProfileVerify></ProfileVerify></AppPrivet> ,
+      },
+      {
+        path: "/verification/rejected_recruiters",
+        element:<AppPrivet><RejectRecureter></RejectRecureter></AppPrivet> ,
+      },
+      {
+        path: "/verification/profile_varify/:id",
+        element:<AppPrivet><ProfileVerifyDetails></ProfileVerifyDetails></AppPrivet> ,
+        loader: ({ params }) =>
+          fetch(`https://rsapp.bringin.io/profile_varifys/${params.id}`),
+      },
+
+      {
+        path: "/verification/candidatereport",
+        element:<AppPrivet><CandidateRepore></CandidateRepore></AppPrivet> ,
+      },
+      {
+        path: "/verification/candidate_report_details/:id",
+        element:<AppPrivet><RepotedDetails></RepotedDetails></AppPrivet> ,
+        loader: ({ params }) =>
+          fetch(`https://rsapp.bringin.io/candidate_report/${params.id}`),
+      },
+      {
+        path: "/verification/job_report",
+        element:<AppPrivet><RecruterReport></RecruterReport></AppPrivet> ,
+      },
+      {
+        path: "/verification/recruter_ob_report_details/:id",
+        element:<AppPrivet><RecruterReportDetails></RecruterReportDetails></AppPrivet> ,
+        loader: ({ params }) =>
+          fetch(`https://rsapp.bringin.io/job_report/${params.id}`),
+      },
+      {
+        path: "/verification/verifyProfile",
+        element:<AppPrivet><VarifyProfile></VarifyProfile></AppPrivet> ,
+      },
+      {
+        path: "/verification/verifyProfile/:id",
+        element:<AppPrivet><RecruterReportDetails></RecruterReportDetails></AppPrivet> ,
+        loader: ({ params }) =>
+          fetch(`https://rsapp.bringin.io/job_report/${params.id}`),
+      },
 
 
-export const route = createBrowserRouter(
+
+      {
+        path: "/verification/candidate",
+        element: <AppPrivet>
+          <CandidateList></CandidateList>
+        </AppPrivet>
+      },
+
+
+      {
+        path: "/verification/candidate/:id",
+        element:<AppPrivet><CandidateDetails></CandidateDetails></AppPrivet> ,
+        loader: ({ params }) =>
+          fetch(`https://rsapp.bringin.io/candidate/${params.id}`),
+      },
+
+    ]
+  },
+
+  {
+    path: "/dashboard",
+    element: <PrivetRoute><Layout></Layout></PrivetRoute>,
+    children: [
+      {
+        path: "/dashboard",
+        element: <Dashboard></Dashboard>,
+      },
+      
+      
+      {
+        path: "/dashboard/all_admin_user",
+        element: <AdminRouter><AllAdminUser/></AdminRouter> 
+      },
+      
+      {
+        path: "/dashboard/jobetype",
+        element: <AppPrivet> <JobType></JobType></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/industryadd",
+        element:<AppPrivet><JobIndustryAdd/></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/categoryadd",
+        element: <CategoryAdd></CategoryAdd>,
+      },
+      {
+        path: "/dashboard/functionalareaadd",
+        element:<AppPrivet><FunctionalAreaAdd/></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/locationadd",
+        element:<AppPrivet><AddLocation/></AppPrivet> ,
+      },
+
+      {
+        path: "/dashboard/salaries",
+        element: <AppPrivet><AddSalaries></AddSalaries></AppPrivet>,
+      },
+      {
+        path: "/dashboard/educationlavel",
+        element: <Educationlavel></Educationlavel>,
+      },
+      {
+        path: "/dashboard/digree",
+        element:<AppPrivet><Digree></Digree></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/subject",
+        element: <AppPrivet><Subject></Subject></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/skill",
+        element: <AppPrivet><Skill></Skill></AppPrivet>,
+      },
+      {
+        path: "/dashboard/companyname",
+        element: <AppPrivet><Company></Company></AppPrivet>,
+      },
+      {
+        path: "/dashboard/companysize",
+        element:<AppPrivet><CompanySize></CompanySize></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/department",
+        element:<AppPrivet><Department></Department></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/jobtitle",
+        element:<AppPrivet><JobTitle></JobTitle></AppPrivet> ,
+      },
+      
+      {
+        path: "/dashboard/experince",
+        element:<AppPrivet><Experince></Experince></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/category",
+        element:<AppPrivet><Category></Category></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/sub_category",
+        element:<AppPrivet><Sub_Catagory></Sub_Catagory></AppPrivet> ,
+      },
+
+      {
+        path: "/dashboard/premium_user",
+        element: <AppPrivet><Premium></Premium></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/not_premium_user",
+        element:<AppPrivet><NotPremium></NotPremium></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/city",
+        element:<AppPrivet><CityName></CityName></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/premium_user/:id",
+        element: <AppPrivet><PremiumUserDetails></PremiumUserDetails></AppPrivet> ,
+        loader: ({ params }) =>
+          fetch(`https://rsapp.bringin.io/premium_user/${params.id}`),
+      },
+      {
+        path: "/dashboard/company_varify",
+        element:<AppPrivet><CompanyVerify></CompanyVerify></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/company_varify/:id",
+        element: <AppPrivet><CompanyVerifyDetails></CompanyVerifyDetails></AppPrivet> ,
+        loader: ({ params }) =>
+          fetch(`https://rsapp.bringin.io/company_varify/${params.id}`),
+      },
+      
     
-    [
-        {
-            path: '/login',
-            element: <Login></Login>
-
-        },
-    {
-        path: '/',
-        element:<Main></Main>,
-        // errorElement: <ErropPage></ErropPage>,
-        children: [
-           
-            {
-                path: '/',
-                element:<Layout></Layout>,
-                children: [
-                  
-                   
-                    {
-                        path: '/',
-                        element:<Dashboard></Dashboard>
-        
-                    },
-                    
-                    {
-                        path: '/customer',
-                        element: <Customers></Customers>
-        
-                    },
-                    {
-                        path: '/jobetype',
-                        element: <JobType></JobType>
-        
-                    },
-                    {
-                        path: '/industryadd',
-                        element: <JobIndustryAdd></JobIndustryAdd>
-        
-                    },
-                    {
-                        path: '/categoryadd',
-                        element: <CategoryAdd></CategoryAdd>
-        
-                    },
-                    {
-                        path: '/functionalareaadd',
-                        element: <FunctionalAreaAdd></FunctionalAreaAdd>
-        
-                    },
-                    {
-                        path: '/locationadd',
-                        element: <AddLocation></AddLocation>
-        
-                    },
-                 
-                    {
-                        path: '/salaries',
-                        element: <AddSalaries></AddSalaries>
-        
-                    },
-                    {
-                        path: '/educationlavel',
-                        element: <Educationlavel></Educationlavel>
-        
-                    },
-                    {
-                        path: '/digree',
-                        element: <Digree></Digree>
-        
-                    },
-                    {
-                        path: '/subject',
-                        element: <Subject></Subject>
-        
-                    },
-                    {
-                        path: '/skill',
-                        element: <Skill></Skill>
-        
-                    },
-                    {
-                        path: '/companyname',
-                        element: <Company></Company>
-        
-                    },
-                    {
-                        path: '/companysize',
-                        element: <CompanySize></CompanySize>
-        
-                    },
-                    {
-                        path: '/department',
-                        element: <Department></Department>
-        
-                    },
-                    {
-                        path: '/jobtitle',
-                        element: <JobTitle></JobTitle>
-        
-                    },
-                    {
-                        path: '/candidatereport',
-                        element: <CandidateRepore></CandidateRepore>
-        
-                    },
-                    {
-                        path: '/candidate_report_details/:id',
-                        element: <RepotedDetails></RepotedDetails>,
-                        loader: ({ params }) => fetch(`http://rsapp.bringin.io/candidate_report/${params.id}`)
-
-        
-                    },
-                    {
-                        path: '/job_report',
-                        element: <RecruterReport></RecruterReport>
-        
-                    },
 
 
 
+// Web admin 
 
-                    {
-                        path: '/premium_user',
-                        element: <Premium></Premium>
-                    },
-                    {
-                        path: '/not_premium_user',
-                        element: <NotPremium></NotPremium>
-                    },
-                    {
-                        path: '/premium_user/:id',
-                        element: <PremiumUserDetails></PremiumUserDetails>,
-                        loader: ({ params }) => fetch(`http://rsapp.bringin.io/premium_user/${params.id}`)
+      {
+        path: "/dashboard/blog_post",
+        element: <WebPrivet><Post></Post></WebPrivet> ,
+      },
+      {
+        path: "/dashboard/all_blog",
+        element: <WebPrivet><AllBlogs/></WebPrivet> ,
+      },
+      {
+        path: "/dashboard/add_category",
+        element: <WebPrivet><AddCategory/></WebPrivet> ,
+      },
+      {
+        path: "/dashboard/all_category",
+        element: <WebPrivet><AllCategory/></WebPrivet> ,
+      },
+     
+      {
+        path: "/dashboard/bringin_featured",
+        element: <WebPrivet><Bringinfeatured/></WebPrivet> ,
+      },
+      {
+        path: "/dashboard/allbringin_featured",
+        element: <WebPrivet><AllBringinfeatured/></WebPrivet> ,
+      },
+      {
+        path: "/dashboard/influencers_opinion",
+        element: <WebPrivet><InfluencersOpinion/></WebPrivet> ,
+      },
+      {
+        path: "/dashboard/allinfuencers_opinion",
+        element: <WebPrivet><Allinfuencers/></WebPrivet> ,
+      },
+      {
+        path: "/dashboard/review",
+        element: <WebPrivet><Review/></WebPrivet> ,
+      },
+      {
+        path: "/dashboard/allreview",
+        element: <WebPrivet><AllReview/></WebPrivet> ,
+      },
+      {
+        path: "/dashboard/cities",
+        element: <WebPrivet><Cities/></WebPrivet> ,
+      },
+      {
+        path: "/dashboard/comment",
+        element: <WebPrivet><Comment/></WebPrivet> ,
+      },
+      {
+        path: "/dashboard/image",
+        element: <WebPrivet><Imgs/></WebPrivet> ,
+      },
 
-                    },
-                    {
-                        path: '/company_varify',
-                        element: <CompanyVerify></CompanyVerify>
-                    },
-                    {
-                        path: '/company_varify/:id',
-                        element: <CompanyVerifyDetails></CompanyVerifyDetails>,
-                        loader: ({ params }) => fetch(`http://rsapp.bringin.io/company_varify/${params.id}`)
-
-                    },
-                    {
-                        path: '/profile_varify',
-                        element: <ProfileVerify></ProfileVerify>
-                    },
-                    {
-                        path: '/profile_varify/:id',
-                        element: <ProfileVerifyDetails></ProfileVerifyDetails>,
-                        loader: ({ params }) => fetch(`http://rsapp.bringin.io/profile_varify/${params.id}`)
-
-                    },
-                ]
-            }
-
-        ]
-    },
- 
-
-
-])
+    ],
+  },
+]);

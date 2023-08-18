@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiFillDelete, AiTwotoneEdit } from "react-icons/ai";
 import Spinner from "../../Spinner/Spinner";
+import LocationEditModan from "./LocationEditModan";
 
 const AddLocation = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,7 +14,7 @@ const AddLocation = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("http://rsapp.bringin.io/admin/location")
+    fetch("https://rsapp.bringin.io/admin/location")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -32,11 +33,11 @@ const AddLocation = () => {
   const addLocation = (data, e) => {
     // console.log(data);
     const locationdata = {
-      city: data.city,
       division: data.division,
+      city: data.city,
     };
 
-    fetch("http://rsapp.bringin.io/location", {
+    fetch("https://rsapp.bringin.io/location", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -54,7 +55,7 @@ const AddLocation = () => {
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
     if (proced) {
-      fetch(`http://rsapp.bringin.io/admin/location/${id}`, {
+      fetch(`https://rsapp.bringin.io/admin/location/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -81,29 +82,56 @@ const AddLocation = () => {
     setIsModalOpen(false);
   };
 
+  const dragItem = useRef(null);
+  const dragOverItem = useRef(null);
+  const handelSort = () => {
+    let _location = [...location];
+    //remove and save the dragged item content
+    const draggedItemContent = _location.splice(dragItem.current, 1)[0];
+    //switch the position
+    _location.splice(dragOverItem.current, 0, draggedItemContent);
 
-  const dragItem=useRef(null)
-  const dragOverItem=useRef(null)
-  const handelSort=()=>{
-    let _location =[...location]
-       //remove and save the dragged item content
-       const draggedItemContent = _location.splice(dragItem.current, 1)[0];
-       //switch the position
-       _location.splice(dragOverItem.current, 0, draggedItemContent);
-  
-      //reset the position ref
-      dragItem.current = null;
-      dragOverItem.current = null;
-  
-      //update the actual array
-      setLocation(_location)
-  }
+    //reset the position ref
+    dragItem.current = null;
+    dragOverItem.current = null;
 
+    //update the actual array
+    setLocation(_location);
+  };
+
+  const [edit, setEdit] = useState(null);
+
+  const closeModal = () => {
+    setEdit(null);
+  };
+
+  const editlocation = (data, e) => {
+    // console.log(data);
+    const editdata = {
+      name: data.name,
+    };
+
+    fetch(`https://rsapp.bringin.io/location_update/${edit._id}`, {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(editdata),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        setRefresh(!refresh);
+        e.target.reset();
+        console.log(result);
+      });
+  };
 
   if (isLoding === false) {
-    return <div className="">
-      <Spinner></Spinner>
-    </div>;
+    return (
+      <div className="">
+        <Spinner></Spinner>
+      </div>
+    );
   }
   return (
     <div>
@@ -127,23 +155,7 @@ const AddLocation = () => {
                     <div className="form-control w-full ">
                       <label className="label">
                         {" "}
-                        <span className="label-text">City Name</span>
-                      </label>
-                      <input
-                        type="text"
-                        {...register("city", {
-                          required: "  city is Required",
-                        })}
-                        className="input input-bordered w-full "
-                      />
-                      {errors.city && (
-                        <p className="text-red-500">{errors.city.message}</p>
-                      )}
-                    </div>
-                    <div className="form-control w-full ">
-                      <label className="label">
-                        {" "}
-                        <span className="label-text">Division </span>
+                        <span className="label-text">City Name </span>
                       </label>
                       <input
                         type="text"
@@ -158,6 +170,23 @@ const AddLocation = () => {
                         </p>
                       )}
                     </div>
+                    <div className="form-control w-full ">
+                      <label className="label">
+                        {" "}
+                        <span className="label-text"> Division Name</span>
+                      </label>
+                      <input
+                        type="text"
+                        {...register("city", {
+                          required: "  city is Required",
+                        })}
+                        className="input input-bordered w-full "
+                      />
+                      {errors.city && (
+                        <p className="text-red-500">{errors.city.message}</p>
+                      )}
+                    </div>
+
                     <input
                       className="shadow-lg rounded lg:text-[20px] md:text-[18] text-[16px] font-bold text-white px-3  bg-[#0077B5] cursor-pointer lg:py-4 md:py-3 py-[6px] w-full mt-4"
                       value="Add "
@@ -185,11 +214,14 @@ const AddLocation = () => {
                         </th>
                         <th scope="col" className="px-6 py-4">
                           {" "}
-                          City
+                          Division
                         </th>
                         <th scope="col" className="px-6 py-4">
                           {" "}
-                          Division
+                          City
+                        </th>
+                        <th scope="col" className="px-6 py-4 text-center">
+                          Edit
                         </th>
                         <th scope="col" className="px-6 py-4 text-center">
                           Action
@@ -197,11 +229,13 @@ const AddLocation = () => {
                       </tr>
                     </thead>
                     {location.map((lo, i) => (
-                      <tbody className="text-[15px] bg-gray-50" key={lo._id}
-                      onDragStart={(e) => (dragItem.current=i)}
-                      onDragEnter={(e) => (dragOverItem.current=i)}
-                      onDragEnd={handelSort}  draggable
-                      
+                      <tbody
+                        className="text-[15px] bg-gray-50"
+                        key={lo._id}
+                        onDragStart={(e) => (dragItem.current = i)}
+                        onDragEnter={(e) => (dragOverItem.current = i)}
+                        onDragEnd={handelSort}
+                        draggable
                       >
                         <tr className="border-b dark:border-neutral-500">
                           <td className="whitespace-nowrap px-6 py-4 font-medium">
@@ -210,22 +244,26 @@ const AddLocation = () => {
                           <td className="whitespace-nowrap px-6 py-4 font-medium">
                             <div>
                               <p className="my-2"> {lo.name}</p>
-                             
                             </div>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 font-medium">
                             {lo.divisionid.map((di) => (
                               <div key={di._id}>
                                 <p className="my-2">{di.divisionname}</p>
-                               
                               </div>
-                            ))}npm ru
+                            ))}
+                          </td>
+                          <td>
+                            <label
+                              onClick={() => setEdit(lo)}
+                              htmlFor="location-modal"
+                              className="btn btn-sm btn-error"
+                            >
+                              Edit
+                            </label>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 text-center">
-                            <button
-                              
-                              onClick={() => handelDeeted(lo._id)}
-                            >
+                            <button onClick={() => handelDeeted(lo._id)}>
                               <AiFillDelete className="text-red-500"></AiFillDelete>
                             </button>
                           </td>
@@ -239,6 +277,19 @@ const AddLocation = () => {
           </div>
         </div>
       </div>
+
+      {edit && (
+        <LocationEditModan
+          title={`Are you sure you want to edit?`}
+          message={`Do you want to edit ${edit.name}.`}
+          successButtonName="Delete"
+          modalData={edit}
+          add={editlocation}
+          closeModal={closeModal}
+        >
+          {" "}
+        </LocationEditModan>
+      )}
     </div>
   );
 };

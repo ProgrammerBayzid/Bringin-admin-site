@@ -2,8 +2,9 @@ import { useRef, useState } from "react";
 import { Button, Modal } from "antd";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
-import { AiFillDelete , AiTwotoneEdit} from "react-icons/ai";
+import { AiFillDelete, AiTwotoneEdit } from "react-icons/ai";
 import Spinner from "../../Spinner/Spinner";
+import CompanyEditModal from "./CompanyEditModal";
 
 const Company = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,8 +13,7 @@ const Company = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-
-    fetch("http://rsapp.bringin.io/seekercompany")
+    fetch("https://rsapp.bringin.io/seekercompany")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -36,7 +36,7 @@ const Company = () => {
       published_date: new Date().toLocaleString(),
     };
 
-    fetch("http://rsapp.bringin.io/seekercompany", {
+    fetch("https://rsapp.bringin.io/seekercompany", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -46,50 +46,47 @@ const Company = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data) {
-          setRefresh(!refresh)
-      }
+          setRefresh(!refresh);
+        }
         e.target.reset();
         console.log(data);
       });
   };
 
-
-  const handelDeeted = id => {
-    const proced = window.confirm('Are You Sure')
+  const handelDeeted = (id) => {
+    const proced = window.confirm("Are You Sure");
     if (proced) {
-        fetch(`http://rsapp.bringin.io/seekercompany/${id}`, {
-            method: "DELETE",
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log(data)
-                if (data) {
-                    alert('deleted successfully');
-                    const remaining = company?.filter(odr => odr._id !== id);
-                    setCompany(remaining);
-                }
-            })
-
+      fetch(`https://rsapp.bringin.io/seekercompany/${id}`, {
+        method: "DELETE",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          if (data) {
+            alert("deleted successfully");
+            const remaining = company?.filter((odr) => odr._id !== id);
+            setCompany(remaining);
+          }
+        });
     }
-};
+  };
 
-const dragItem=useRef(null)
-const dragOverItem=useRef(null)
-const handelSort=()=>{
-  let _company =[...company]
-     //remove and save the dragged item content
-     const draggedItemContent = _company.splice(dragItem.current, 1)[0];
-     //switch the position
-     _company.splice(dragOverItem.current, 0, draggedItemContent);
+  const dragItem = useRef(null);
+  const dragOverItem = useRef(null);
+  const handelSort = () => {
+    let _company = [...company];
+    //remove and save the dragged item content
+    const draggedItemContent = _company.splice(dragItem.current, 1)[0];
+    //switch the position
+    _company.splice(dragOverItem.current, 0, draggedItemContent);
 
     //reset the position ref
     dragItem.current = null;
     dragOverItem.current = null;
 
     //update the actual array
-    setCompany(_company)
-}
-
+    setCompany(_company);
+  };
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -103,10 +100,37 @@ const handelSort=()=>{
     setIsModalOpen(false);
   };
 
+  const [edit, setEdit] = useState(null);
+  const closeModal = () => {
+    setEdit(null);
+  };
+  const editskill = (data, e) => {
+    // console.log(data);
+    const editdata = {
+      name: data.name,
+    };
+
+    fetch(`https://rsapp.bringin.io/company_name_update/${edit._id}`, {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(editdata),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        setRefresh(!refresh);
+        e.target.reset();
+        console.log(result);
+      });
+  };
+
   if (isLoding === false) {
-    return <div className="">
-      <Spinner></Spinner>
-    </div>;
+    return (
+      <div className="">
+        <Spinner></Spinner>
+      </div>
+    );
   }
   return (
     <div className="w-full">
@@ -159,47 +183,81 @@ const handelSort=()=>{
         </Modal>
       </div>
       <div>
-      <div className="flex flex-col">
-  <div className=" ">
-    <div className="inline-block min-w-full py-2 ">
-      <div className="overflow-hidden">
-        <table className="min-w-full w-[1000px] text-left text-sm font-light">
-          <thead className="border-b bg-gray-100 text-[18px] font-medium dark:border-neutral-500 ">
-            <tr>
-              <th scope="col" className="px-6 py-4">No</th>
-              <th scope="col" className="px-6 py-4">Company</th>
-              <th scope="col" className="px-6 py-4">Company ID</th>
-              <th scope="col" className="px-6 py-4 text-center">Action</th>
-             
-            </tr>
-          </thead>
-          {
-       company.map((co , i)=>
-            <tbody className="text-[15px] bg-gray-50" key={co._id}
-            onDragStart={(e) => (dragItem.current=i)}
-            onDragEnter={(e) => (dragOverItem.current=i)}
-            onDragEnd={handelSort}  draggable
-            >
-            <tr className="border-b dark:border-neutral-500">
-              <td className="whitespace-nowrap px-6 py-4 font-medium">{i+1}</td>
-              <td className="whitespace-nowrap px-6 py-4 font-medium">{co.name}</td>
-              <td className="whitespace-nowrap px-6 py-4 font-medium">{co._id}</td>
-              <td className="whitespace-nowrap px-6 py-4 text-center">
-              <button  onClick={() => handelDeeted(co._id)} ><AiFillDelete className="text-red-500"></AiFillDelete></button>
-
-              </td>
-            </tr>
-          </tbody>
-            
-            )
-          }
-       
-        </table>
+        <div className="flex flex-col">
+          <div className=" ">
+            <div className="inline-block min-w-full py-2 ">
+              <div className="overflow-hidden">
+                <table className="min-w-full w-[1000px] text-left text-sm font-light">
+                  <thead className="border-b bg-gray-100 text-[18px] font-medium dark:border-neutral-500 ">
+                    <tr>
+                      <th scope="col" className="px-6 py-4">
+                        No
+                      </th>
+                      <th scope="col" className="px-6 py-4">
+                        Company
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-center">
+                        Action
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-">
+                        Edit
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-center">
+                        Delete
+                      </th>
+                    </tr>
+                  </thead>
+                  {company.map((co, i) => (
+                    <tbody
+                      className="text-[15px] bg-gray-50"
+                      key={co._id}
+                      onDragStart={(e) => (dragItem.current = i)}
+                      onDragEnter={(e) => (dragOverItem.current = i)}
+                      onDragEnd={handelSort}
+                      draggable
+                    >
+                      <tr className="border-b dark:border-neutral-500">
+                        <td className="whitespace-nowrap px-6 py-4 font-medium">
+                          {i + 1}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 font-medium">
+                          {co.name}
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 font-medium">
+                          <label
+                            onClick={() => setEdit(co)}
+                            htmlFor="company-modal"
+                            className="btn btn-sm btn-error"
+                          >
+                            Edit
+                          </label>
+                        </td>
+                        <td className="whitespace-nowrap px-6 py-4 text-center">
+                          <button onClick={() => handelDeeted(co._id)}>
+                            <AiFillDelete className="text-red-500"></AiFillDelete>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  ))}
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
-      </div>
+      {edit && (
+        <CompanyEditModal
+          title={`Are you sure you want to edit?`}
+          message={`Do you want to edit ${edit.name}.`}
+          successButtonName="Delete"
+          modalData={edit}
+          add={editskill}
+          closeModal={closeModal}
+        >
+          {" "}
+        </CompanyEditModal>
+      )}
     </div>
   );
 };

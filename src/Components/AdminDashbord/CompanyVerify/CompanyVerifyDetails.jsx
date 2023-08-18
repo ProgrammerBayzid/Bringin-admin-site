@@ -18,7 +18,7 @@ const CompanyVerifyDetails = () => {
     const [premium, setPremium] = useState([]);
 
     useEffect(() => {
-      fetch(`http://rsapp.bringin.io/verifyRecruterCompny?_id=${userid}`)
+      fetch(`https://rsapp.bringin.io/verifyRecruterCompny?_id=${userid}`)
         .then((res) => res.json())
         .then((data) => {
         //   setIsLoding(true);
@@ -29,19 +29,7 @@ const CompanyVerifyDetails = () => {
    
     // console.log(premium); 
 
-    const handelMakeVerifide = _id => {
-        fetch(`http://rsapp.bringin.io/verifyRecruterCompny/${_id}`, {
-            method: 'PATCH',
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data) {
-                    alert('Make Verifiy Successful.');
-                    setRefresh(!refresh);
-                    console.log(data._id);
-                }
-            })
-    };
+  
     // if (isLoding === false) {
     //     return <div className="">
     //       <Spinner></Spinner>
@@ -52,15 +40,7 @@ const CompanyVerifyDetails = () => {
 
     return (
         <div>
-             <td>{premium?.company_verify !== true ?
-                                    <button onClick={() => handelMakeVerifide(premium._id)} className='btn btn-xs bg-indigo-500 text-white '>Make Verify</button>
-                                    :
-                                    <span className='text-blue-500'><GoVerified></GoVerified></span>
-                                }</td>
-            
-              <h1>{premium.firstname}</h1>
-
-            
+          
         </div>
     );
 };

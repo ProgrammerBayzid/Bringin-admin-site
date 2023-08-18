@@ -4,16 +4,17 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AiFillDelete, AiTwotoneEdit } from "react-icons/ai";
 import Spinner from "../../Spinner/Spinner";
+import DigreeEditModel from "./DigreeEditModel";
 
 const Digree = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [refresh, setRefresh] = useState(true);
   const [isLoding, setIsLoding] = useState(false);
-  
+
   const [digree, setDigree] = useState([]);
   useEffect(() => {
-    fetch("http://rsapp.bringin.io/admin/digree")
+    fetch("https://rsapp.bringin.io/admin/digree")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -36,7 +37,7 @@ const Digree = () => {
       education: data.education,
     };
 
-    fetch("http://rsapp.bringin.io/digree_add", {
+    fetch("https://rsapp.bringin.io/digree_add", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -54,7 +55,7 @@ const Digree = () => {
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
     if (proced) {
-      fetch(`http://rsapp.bringin.io/admin/digree/${id}`, {
+      fetch(`https://rsapp.bringin.io/admin/digree/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -81,25 +82,25 @@ const Digree = () => {
     setIsModalOpen(false);
   };
 
-  const dragItem=useRef(null)
-  const dragOverItem=useRef(null)
-  const handelSort=()=>{
-    let _digree =[...digree]
-       //remove and save the dragged item content
-       const draggedItemContent = _digree.splice(dragItem.current, 1)[0];
-       //switch the position
-       _digree.splice(dragOverItem.current, 0, draggedItemContent);
-  
-      //reset the position ref
-      dragItem.current = null;
-      dragOverItem.current = null;
-  
-      //update the actual array
-      setDigree(_digree)
-  }
+  const dragItem = useRef(null);
+  const dragOverItem = useRef(null);
+  const handelSort = () => {
+    let _digree = [...digree];
+    //remove and save the dragged item content
+    const draggedItemContent = _digree.splice(dragItem.current, 1)[0];
+    //switch the position
+    _digree.splice(dragOverItem.current, 0, draggedItemContent);
+
+    //reset the position ref
+    dragItem.current = null;
+    dragOverItem.current = null;
+
+    //update the actual array
+    setDigree(_digree);
+  };
   const [educationlavel, setEducationlavel] = useState([]);
   useEffect(() => {
-    fetch("http://rsapp.bringin.io/education_lavel")
+    fetch("https://rsapp.bringin.io/education_lavel")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -109,10 +110,39 @@ const Digree = () => {
   }, []);
   console.log(educationlavel);
 
+  const [edit, setEdit] = useState(null);
+
+  const closeModal = () => {
+    setEdit(null);
+  };
+
+  const editdigree = (data, e) => {
+    // console.log(data);
+    const editdata = {
+      name: data.name,
+    };
+
+    fetch(`https://rsapp.bringin.io/degree_update/${edit._id}`, {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(editdata),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        setRefresh(!refresh);
+        e.target.reset();
+        console.log(result);
+      });
+  };
+
   if (isLoding === false) {
-    return <div className="">
-      <Spinner></Spinner>
-    </div>;
+    return (
+      <div className="">
+        <Spinner></Spinner>
+      </div>
+    );
   }
   return (
     <div>
@@ -159,14 +189,15 @@ const Digree = () => {
                         className="select input-bordered w-full "
                       >
                         {educationlavel.map((ca) => {
-
                           return (
-                            <option value={ca._id} key={ca._id}>{ca.name}</option>
+                            <option value={ca._id} key={ca._id}>
+                              {ca.name}
+                            </option>
                           );
                         })}
                       </select>
-                    </div>                                                                                                                                                                                                                                                  
-                
+                    </div>
+
                     <input
                       className="shadow-lg rounded lg:text-[20px] md:text-[18] text-[16px] font-bold text-white px-3  bg-[#0077B5] cursor-pointer lg:py-4 md:py-3 py-[6px] w-full mt-4"
                       value="Add "
@@ -196,22 +227,26 @@ const Digree = () => {
                           <th scope="col" className="px-6 py-4">
                             Digree
                           </th>
-                          <th scope="col" className="px-6 py-4">
-                            Subject
-                          </th>
+
                           <th scope="col" className="px-6 py-4">
                             Education
                           </th>
+                          <th scope="col" className="px-6 py-4 text-">
+                            Edit
+                          </th>
                           <th scope="col" className="px-6 py-4 text-center">
-                            Action
+                            Delete
                           </th>
                         </tr>
                       </thead>
                       {digree.map((di, i) => (
-                        <tbody className="text-[15px] bg-gray-50" key={di._id}   
-                        onDragStart={(e) => (dragItem.current=i)}
-                        onDragEnter={(e) => (dragOverItem.current=i)}
-                        onDragEnd={handelSort}  draggable
+                        <tbody
+                          className="text-[15px] bg-gray-50"
+                          key={di._id}
+                          onDragStart={(e) => (dragItem.current = i)}
+                          onDragEnter={(e) => (dragOverItem.current = i)}
+                          onDragEnd={handelSort}
+                          draggable
                         >
                           <tr className="border-b dark:border-neutral-500">
                             <td className="whitespace-nowrap px-6 py-4 font-medium">
@@ -220,38 +255,30 @@ const Digree = () => {
                             <td className="whitespace-nowrap px-6 py-4 font-medium">
                               <div>
                                 <p className="my-2"> {di.name}</p>
-                            
                               </div>
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 font-medium">
-                              {di.subject.map((su) => (
-                                <div key={su._id}>
-                                  {su?.name ? 
-                                    <p className="my-2"> {su.name}</p>
-                                   : 
-                                    <p>Null</p>
-                                  }
-                                </div>
-                              ))}
-                            </td>
+
                             <td className="whitespace-nowrap px-6 py-4 font-medium">
                               <div>
-                                {di?.educaton?.name ? (
-                                  <p className="my-2">
-                                     {di.educaton.name}
-                                  </p>
+                                {di?.education?.name ? (
+                                  <p className="my-2">{di.education.name}</p>
                                 ) : (
                                   <p>Null</p>
                                 )}
-                              
                               </div>
                             </td>
-                            <td className="whitespace-nowrap px-6 py-4 text-center">
-                              <button
-                              
-                                onClick={() => handelDeeted(di._id)}
+                            <td>
+                              <label
+                                onClick={() => setEdit(di)}
+                                htmlFor="education-modal"
+                                className="btn btn-sm btn-error"
                               >
-                                <AiFillDelete   className="text-red-500"></AiFillDelete>
+                                Edit
+                              </label>
+                            </td>
+                            <td className="whitespace-nowrap px-6 py-4 text-center">
+                              <button onClick={() => handelDeeted(di._id)}>
+                                <AiFillDelete className="text-red-500"></AiFillDelete>
                               </button>
                             </td>
                           </tr>
@@ -265,6 +292,19 @@ const Digree = () => {
           </div>
         </div>
       </div>
+
+      {edit && (
+        <DigreeEditModel
+          title={`Are you sure you want to edit?`}
+          message={`Do you want to edit ${edit.name}.`}
+          successButtonName="Delete"
+          modalData={edit}
+          add={editdigree}
+          closeModal={closeModal}
+        >
+          {" "}
+        </DigreeEditModel>
+      )}
     </div>
   );
 };

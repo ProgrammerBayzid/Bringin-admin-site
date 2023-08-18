@@ -10,7 +10,7 @@ const CompanyVerify = () => {
   
     const [premium, setPremium] = useState([]);
     useEffect(() => {
-      fetch("http://rsapp.bringin.io/verifyCompny")
+      fetch("https://rsapp.bringin.io/verifyCompny")
         .then((res) => res.json())
         .then((data) => {
           setIsLoding(true);
@@ -117,7 +117,7 @@ const CompanyVerify = () => {
                             </div>
                           </td> */}
                           <td className="whitespace-nowrap px-6 py-4 text-center">
-                            <Link to={ `/company_varify/${pre._id}`}> 
+                            <Link to={ `/dashboard/company_varify/${pre._id}`}> 
 
 
                             <button className="bg-cyan-400	p-2 border rounded text-white font-bold">

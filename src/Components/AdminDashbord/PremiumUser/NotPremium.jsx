@@ -12,7 +12,7 @@ const NotPremium = () => {
   
     const [premium, setPremium] = useState([]);
     useEffect(() => {
-      fetch("http://rsapp.bringin.io/premium_user?premium=false")
+      fetch("https://rsapp.bringin.io/premium_user?premium=false")
         .then((res) => res.json())
         .then((data) => {
           setIsLoding(true);
@@ -63,7 +63,7 @@ const NotPremium = () => {
                    </th>
                  </tr>
                </thead>
-               {premium.map((pre, i) => (
+               {premium?.map((pre, i) => (
                  <tbody
                    className="text-[15px] bg-gray-50"
                    key={pre._id}
@@ -119,7 +119,7 @@ const NotPremium = () => {
                        </div>
                      </td>
                      <td className="whitespace-nowrap px-6 py-4 text-center">
-                       <Link to={ `/premium_user/${pre._id}`}> 
+                       <Link to={ `/dashboard/premium_user/${pre._id}`}> 
 
 
                        <button className="bg-cyan-400	p-2 border rounded text-white font-bold">
