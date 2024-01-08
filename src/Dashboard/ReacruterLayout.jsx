@@ -9,15 +9,18 @@ const ReacruterLayout = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
+
     return (
         <div>
             
              <div >
                <div className="">
-               <RecruterSideNav></RecruterSideNav>
-                <div className="mt-5 w-full px-4">
+              <div className="relative">
+              <RecruterSideNav ></RecruterSideNav>
+                <div className="mt-1 w-full px-4 absolute inset-x-0 top-0">
                 <Outlet></Outlet>
                 </div>
+              </div>
                </div>
              </div>
         </div>

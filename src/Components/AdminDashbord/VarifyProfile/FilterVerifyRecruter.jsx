@@ -4,7 +4,7 @@ const FilterVerifyRecruter = ({setItems, data}) => {
   const [industry, setIndustry] = useState([]);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/industry")
+    fetch("https://rsapp.unbolt.co/admin/industry")
       .then((res) => res.json())
       .then((data) => {
         setIndustry(data);
@@ -101,7 +101,7 @@ const FilterVerifyRecruter = ({setItems, data}) => {
               <div className="p-5">
                 <div className="flex justify-between">
                   <div>
-                    <p className="text-[16px] w-[114px] font-semibold bg-[#0077B5] text-white p-2 rounded rounded-[20px]">
+                    <p className="text-[13px] w-[114px] font-semibold bg-[#0077B5] text-white py-1 px-[15px] rounded rounded-[20px]">
                       Subscription
                     </p>
                     <div className="flex gap-2 mt-3">
@@ -113,8 +113,8 @@ const FilterVerifyRecruter = ({setItems, data}) => {
                           onClick={() => handlesubscriptionClick(sub?.subscription)}
                           className={
                             isActivesubscription == sub?.subscription
-                              ? "border border-[1px] m-1.5 bg-[#0077B5] text-white rouunded rounded-[30px] px-2"
-                              : "border border-[1px] rouunded rounded-[30px] px-2 hover:bg-[#0077B5] hover:text-white"
+                              ? "border text-[13px] border-[1px] m-1.5 bg-[#0077B5] text-white rouunded rounded-[30px] px-2"
+                              : "border text-[13px] border-[1px] rouunded rounded-[30px] px-2 hover:bg-[#0077B5] hover:text-white"
                           }
                         >
                           {sub?.subscription}
@@ -138,7 +138,7 @@ const FilterVerifyRecruter = ({setItems, data}) => {
                   </div>
                 </div>
                 <div className="mt-5">
-                  <p className="text-[16px] w-[117px] font-semibold bg-[#0077B5] text-white p-2 rounded rounded-[20px]">
+                  <p className="text-[13px] w-[117px] font-semibold bg-[#0077B5] text-white py-1 px-[18px] rounded rounded-[20px]">
                     Job Industry
                   </p>
 
@@ -146,7 +146,7 @@ const FilterVerifyRecruter = ({setItems, data}) => {
                   <button
                           onClick={inAll}
                           className={
-                            "border border-[1px] m-1.5 text-[14px] hover:bg-[#0077B5] hover:text-white rouunded rounded-[30px] px-2"
+                            "border border-[1px] m-1.5 text-[13px] hover:bg-[#0077B5] hover:text-white rouunded rounded-[30px] px-2"
                           }
                         >
                           All
@@ -157,8 +157,8 @@ const FilterVerifyRecruter = ({setItems, data}) => {
                         onClick={() => handleIndustryClick(ind?.industryname)}
                         className={
                           isActiveIndustry == ind?.industryname
-                            ? "border border-[1px] m-1.5 bg-[#0077B5] text-white rouunded rounded-[30px] px-2"
-                            : "border border-[1px] m-1.5 hover:bg-[#0077B5] hover:text-white rouunded rounded-[30px] px-2"
+                            ? "border  text-[13px]  border-[1px] m-1.5 bg-[#0077B5] text-white rouunded rounded-[30px] px-2"
+                            : "border  text-[13px] border-[1px] m-1.5 hover:bg-[#0077B5] hover:text-white rouunded rounded-[30px] px-2"
                         }
                       >
                         {ind?.industryname}

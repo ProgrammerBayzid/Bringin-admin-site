@@ -14,7 +14,7 @@ const Digree = () => {
 
   const [digree, setDigree] = useState([]);
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/digree")
+    fetch("https://rsapp.unbolt.co/admin/digree")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -36,27 +36,46 @@ const Digree = () => {
       name: data.name,
       education: data.education,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch("https://rsapp.bringin.io/digree_add", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(digreedata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+      fetch("https://rsapp.unbolt.co/digree_add", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+
+        },
+        body: JSON.stringify(digreedata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
   };
 
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
-    if (proced) {
-      fetch(`https://rsapp.bringin.io/admin/digree/${id}`, {
+
+      const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if (!proced &&  token === null) {
+      console.log("token not found");
+    } else {
+      fetch(`https://rsapp.unbolt.co/admin/digree/${id}`, {
         method: "DELETE",
+        headers:{
+          Authorization: `Bearer ${token}`,
+
+        }
       })
         .then((res) => res.json())
         .then((data) => {
@@ -85,22 +104,27 @@ const Digree = () => {
   const dragItem = useRef(null);
   const dragOverItem = useRef(null);
   const handelSort = () => {
-    let _digree = [...digree];
-    //remove and save the dragged item content
-    const draggedItemContent = _digree.splice(dragItem.current, 1)[0];
-    //switch the position
-    _digree.splice(dragOverItem.current, 0, draggedItemContent);
 
-    //reset the position ref
-    dragItem.current = null;
-    dragOverItem.current = null;
+ 
 
-    //update the actual array
-    setDigree(_digree);
+
+      let _digree = [...digree];
+      //remove and save the dragged item content
+      const draggedItemContent = _digree.splice(dragItem.current, 1)[0];
+      //switch the position
+      _digree.splice(dragOverItem.current, 0, draggedItemContent);
+  
+      //reset the position ref
+      dragItem.current = null;
+      dragOverItem.current = null;
+  
+      //update the actual array
+      setDigree(_digree);
+    
   };
   const [educationlavel, setEducationlavel] = useState([]);
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/education_lavel")
+    fetch("https://rsapp.unbolt.co/education_lavel")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -122,19 +146,32 @@ const Digree = () => {
       name: data.name,
     };
 
-    fetch(`https://rsapp.bringin.io/degree_update/${edit._id}`, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(editdata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+
+      fetch(`https://rsapp.unbolt.co/degree_update/${edit._id}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+
+        },
+        body: JSON.stringify(editdata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
+
+
   };
 
   if (isLoding === false) {
@@ -225,7 +262,7 @@ const Digree = () => {
                             No
                           </th>
                           <th scope="col" className="px-6 py-4">
-                            Digree
+                            Degree
                           </th>
 
                           <th scope="col" className="px-6 py-4">

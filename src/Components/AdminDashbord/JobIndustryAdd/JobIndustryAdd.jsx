@@ -15,7 +15,7 @@ const JobIndustryAdd = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/industry")
+    fetch("https://rsapp.unbolt.co/admin/industry")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -37,26 +37,48 @@ const JobIndustryAdd = () => {
       industryname: data.industryname,
     };
 
-    fetch("https://rsapp.bringin.io/industryadd", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(industrydata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+
+      fetch("https://rsapp.unbolt.co/industryadd", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+
+        },
+        body: JSON.stringify(industrydata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
+
   };
 
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
-    if (proced) {
-      fetch(`https://rsapp.bringin.io/admin/industry/${id}`, {
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if (!proced && token === null) {
+      console.log("token not found");
+    } else {
+
+      fetch(`https://rsapp.unbolt.co/admin/industry/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+
+        },
       })
         .then((res) => res.json())
         .then((data) => {
@@ -68,25 +90,65 @@ const JobIndustryAdd = () => {
           }
         });
     }
+  
+    
   };
 
   const dragItem = useRef(null);
   const dragOverItem = useRef(null);
 
   const handelSort = () => {
-    let _industry = [...industry];
-    //remove and save the dragged item content
-    const draggedItemContent = _industry.splice(dragItem.current, 1)[0];
-    //switch the position
-    _industry.splice(dragOverItem.current, 0, draggedItemContent);
 
-    //reset the position ref
-    dragItem.current = null;
-    dragOverItem.current = null;
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    //update the actual array
-    setIndustry(_industry);
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+      let _industry = [...industry];
+      // Remove and save the dragged item content
+      const draggedItemContent = _industry.splice(dragItem.current, 1)[0];
+      // Switch the position
+      _industry.splice(dragOverItem.current, 0, draggedItemContent);
+    
+      // Reset the position refs
+      dragItem.current = null;
+      dragOverItem.current = null;
+    
+      // Prepare data for the API request
+      const updateData = _industry.map((category, index) => ({
+        id: category._id, // Replace with the actual identifier property
+        sortOrder: index + 1, // Update the sort order
+      }));
+    
+      // Update the actual array
+      setIndustry(_industry);
+    
+      // Make the API request to update the category order
+      fetch("https://rsapp.unbolt.co/admin/industry_update_bulk", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+
+        },
+        body: JSON.stringify(updateData),
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log("Category order updated successfully.");
+          } else {
+            console.error("Category order update failed.");
+          }
+        })
+        .catch((error) => {
+          console.error("API request error:", error);
+        });
+    }
+   
   };
+  
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -111,20 +173,30 @@ const JobIndustryAdd = () => {
     const industryeditdata = {
       industryname: data.industryname,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch(`https://rsapp.bringin.io/industry_update/${edit._id}`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(industryeditdata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+
+      fetch(`https://rsapp.unbolt.co/industry_update/${edit._id}`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(industryeditdata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
+
   };
   if (isLoding === false) {
     return <Spinner></Spinner>;
@@ -133,13 +205,13 @@ const JobIndustryAdd = () => {
     <div>
       <div>
         <div>
-          <Button className="bg-[#0077B5] btn" onClick={showModal}>
-            Add Industry Name
-          </Button>
+          <p className="bg-[#0077B5] w-[180px] p-[2px] rounded cursor-pointer  text-center  text-white" onClick={showModal}>
+            Add Categories Name
+          </p>
         </div>
         <div>
           <Modal
-            title=" Add An Industry"
+            title=" Add An Categories"
             open={isModalOpen}
             onOk={handleOk}
             onCancel={handleCancel}
@@ -151,7 +223,7 @@ const JobIndustryAdd = () => {
                     <div className="form-control w-full ">
                       <label className="label">
                         {" "}
-                        <span className="label-text">Industry Name</span>
+                        <span className="label-text">Categories Name</span>
                       </label>
                       <input
                         type="text"
@@ -183,17 +255,17 @@ const JobIndustryAdd = () => {
 
       <div>
         <div className="flex flex-col">
-          <div className=" mt-10">
+          <div className=" mt-[3px]">
             <div className="inline-block  py-2 ">
-              <div className="overflow-hidden">
-                <table className=" text-left text-sm w-[1000px] font-light">
-                  <thead className="border-b bg-gray-100 text-[18px] font-medium  ">
+              <div className="h-[650px] overflow-y-auto  ">
+                <table className=" text-left text-sm w-[1200px] font-light">
+                  <thead className="border-b bg-gray-100 text-[18px] font-medium  sticky top-[0px]">
                     <tr>
                       <th scope="col" className="px-6 py-4">
                         No
                       </th>
                       <th scope="col" className="px-6 py-4">
-                        Industry
+                      Categories
                       </th>
                       {/* <th scope="col" className="px-6 py-4">Categoris</th> */}
                       <th scope="col" className="px-6 py-4 text-">
@@ -226,8 +298,8 @@ const JobIndustryAdd = () => {
                           <label
                             onClick={() => setEdit(ins)}
                             htmlFor="confirmation-modal"
-                            className="btn btn-sm btn-error"
-                          >
+                            className=" px-[4px] py-[3px] rounded cursor-pointer btn-error text-white text-[13px]"
+                            >
                             Edit
                           </label>
                         </td>

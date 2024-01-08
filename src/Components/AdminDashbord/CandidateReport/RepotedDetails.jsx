@@ -3,7 +3,14 @@ import { useEffect, useState } from "react";
 
 const RepotedDetails = ({ closeModal, modalData }) => {
   console.log(modalData);
-  const { userid, report, image, candidateid, description, candidatefulldetailsid } = modalData;
+  const {
+    userid,
+    report,
+    image,
+    candidateid,
+    description,
+    candidatefulldetailsid,
+  } = modalData;
   const {
     number,
     fastname,
@@ -15,38 +22,33 @@ const RepotedDetails = ({ closeModal, modalData }) => {
     email,
   } = candidateid;
 
-  let newStr = report;
-  let re = newStr.slice(1, -1);
-  console.log(re);
+  // Remove square brackets from each element
+  const repot = report.map((item) => item.replace(/\[|\]/g, ""));
 
-  let inputString = report;
-  let outputString = inputString.slice(1, -1); // Slice the string to remove the first and last characters
-  console.log(outputString);
+  // const text = `https://unbolt.co/candidatedetails/${candidatefulldetailsid._id}`;
 
-  const text = `https://bringin.io/candidatedetails/${candidatefulldetailsid}`;
+  // const [isCopied, setIsCopied] = useState(false);
 
-  const [isCopied, setIsCopied] = useState(false);
+  // const handleCopyClick = () => {
+  //   const textArea = document.createElement("textarea");
+  //   textArea.value = text;
+  //   document.body.appendChild(textArea);
+  //   textArea.select();
 
-  const handleCopyClick = () => {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    document.body.appendChild(textArea);
-    textArea.select();
+  //   try {
+  //     document.execCommand("copy");
+  //     setIsCopied(true);
+  //   } catch (err) {
+  //     console.error("Failed to copy Profile Link:", err);
+  //   }
 
-    try {
-      document.execCommand("copy");
-      setIsCopied(true);
-    } catch (err) {
-      console.error("Failed to copy Profile Link:", err);
-    }
-
-    document.body.removeChild(textArea);
-  };
+  //   document.body.removeChild(textArea);
+  // };
 
   const [profile, setProfile] = useState([]);
 
   useEffect(() => {
-    fetch(`https://rsapp.bringin.io/verifyRecruterProfile?_id=${userid}`)
+    fetch(`https://rsapp.unbolt.co/verifyRecruterProfile?_id=${userid}`)
       .then((res) => res.json())
       .then((data) => {
         setProfile(data);
@@ -77,10 +79,9 @@ const RepotedDetails = ({ closeModal, modalData }) => {
               <div className="">
                 <div>
                   <div className="w-[600px]  h-[287px] ">
-                   
                     <div>
                       <p className="bg-[#EFF1F2]  text-center pt-[6px] text-[16px] font-medium w-[300px] h-[38px] border rounded text-[#D10000]">
-                        {outputString}
+                        {repot}
                       </p>
                     </div>
 
@@ -94,21 +95,21 @@ const RepotedDetails = ({ closeModal, modalData }) => {
                         <Image
                           width={130}
                           height={95}
-                          src={`https://rsapp.bringin.io/${image}`}
+                          src={`https://rsapp.unbolt.co/${image}`}
                         />
                       </div>
                       <div className="w-[133px] h-[98px] bg-[#F7F7F7] mt-4">
                         <Image
                           width={130}
                           height={95}
-                          src={`https://rsapp.bringin.io/${image}`}
+                          src={`https://rsapp.unbolt.co/${image}`}
                         />
                       </div>
                       <div className="w-[133px] h-[98px] bg-[#F7F7F7] mt-4">
                         <Image
                           width={130}
                           height={95}
-                          src={`https://rsapp.bringin.io/${image}`}
+                          src={`https://rsapp.unbolt.co/${image}`}
                         />
                       </div>
                     </div>
@@ -118,10 +119,14 @@ const RepotedDetails = ({ closeModal, modalData }) => {
                           Report By
                         </p>
                       </div>
-
-                      <button onClick={handleCopyClick} className="bg-[#0077B5] px-[8px] h-[28px] text-[15px] font-medium rounded rounded text-white">
-                        {isCopied ? "Copied!" : "Profile Link"}
-                      </button>
+                      <a
+                        href={`https://unbolt.co/candidate-profile/${candidatefulldetailsid?._id}`}
+                        target="_blank"
+                      >
+                        <button className="bg-[#0077B5] px-[8px] h-[28px] text-[15px] font-medium rounded rounded text-white">
+                          Profile
+                        </button>
+                      </a>
                     </div>
                     <div className="flex gap-2 w-full">
                       <div>
@@ -177,7 +182,7 @@ const RepotedDetails = ({ closeModal, modalData }) => {
                           {profile?.designation}
                         </p>
                         <p className="text-[16px] font-medium text-[#383A3D]  my-2">
-                          +880 {profile?.number}
+                          {profile?.number}
                         </p>
                         <p className="text-[16px] font-medium text-[#383A3D]  ">
                           {profile?.email}{" "}

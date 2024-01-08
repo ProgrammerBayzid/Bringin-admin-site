@@ -15,7 +15,7 @@ const IndustaryEditModal = ({ title, message, add, closeModal, modalData,  }) =>
     //       industryname: data.industryname,
     //     };
     
-    //     fetch(`https://rsapp.bringin.io/industry_update/${modalData._id}`, {
+    //     fetch(`https://rsapp.unbolt.co/industry_update/${modalData._id}`, {
     //       method: "POST",
     //       headers: {
     //         "content-type": "application/json",

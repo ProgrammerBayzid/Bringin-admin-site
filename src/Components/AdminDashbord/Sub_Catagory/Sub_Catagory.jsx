@@ -15,7 +15,7 @@ const Sub_Catagory = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/category2")
+    fetch("https://rsapp.unbolt.co/admin/category2")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -37,27 +37,48 @@ const Sub_Catagory = () => {
       categoryname: data.categoryname,
       industryid: data.industryid,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch("https://rsapp.bringin.io/category2add", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(catagoridata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    if (token === null) {
+      console.log("token not found");
+    } else {
+
+
+      fetch("https://rsapp.unbolt.co/category2add", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+  
+        },
+        body: JSON.stringify(catagoridata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
+
   };
 
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
-    if (proced) {
-      fetch(`https://rsapp.bringin.io/admin/category2/${id}`, {
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if (!proced && token === null) {
+      console.log("token not found");
+    } else {
+
+
+      fetch(`https://rsapp.unbolt.co/admin/category2/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
         .then((res) => res.json())
         .then((data) => {
@@ -69,6 +90,8 @@ const Sub_Catagory = () => {
           }
         });
     }
+    
+    
   };
 
   const showModal = () => {
@@ -85,25 +108,77 @@ const Sub_Catagory = () => {
 
   const dragItem = useRef(null);
   const dragOverItem = useRef(null);
+  // const handelSort = () => {
+  //   let _category = [...category];
+  //   //remove and save the dragged item content
+  //   const draggedItemContent = _category.splice(dragItem.current, 1)[0];
+  //   //switch the position
+  //   _category.splice(dragOverItem.current, 0, draggedItemContent);
+
+  //   //reset the position ref
+  //   dragItem.current = null;
+  //   dragOverItem.current = null;
+
+  //   //update the actual array
+  //   setCategory(_category);
+  // };
+
   const handelSort = () => {
-    let _category = [...category];
-    //remove and save the dragged item content
-    const draggedItemContent = _category.splice(dragItem.current, 1)[0];
-    //switch the position
-    _category.splice(dragOverItem.current, 0, draggedItemContent);
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    //reset the position ref
-    dragItem.current = null;
-    dragOverItem.current = null;
+    if ( token === null) {
+      console.log("token not found");
+    } else {
 
-    //update the actual array
-    setCategory(_category);
+      let _category = [...category];
+      // Remove and save the dragged item content
+      const draggedItemContent = _category.splice(dragItem.current, 1)[0];
+      // Switch the position
+      _category.splice(dragOverItem.current, 0, draggedItemContent);
+    
+      // Reset the position refs
+      dragItem.current = null;
+      dragOverItem.current = null;
+    
+      // Prepare data for the API request
+      const updateData = _category.map((category, index) => ({
+        id: category._id, // Replace with the actual identifier property
+        sortOrder: index + 1, // Update the sort order
+      }));
+    
+      // Update the actual array
+      setCategory(_category);
+    
+      // Make the API request to update the category order
+      fetch("https://rsapp.unbolt.co/category2_update_bulk", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+
+        },
+        
+        body: JSON.stringify(updateData),
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log("Category order updated successfully.");
+          } else {
+            console.error("Category order update failed.");
+          }
+        })
+        .catch((error) => {
+          console.error("API request error:", error);
+        });
+    }
+   
   };
 
   const [industry, setIndustry] = useState([]);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/industry2")
+    fetch("https://rsapp.unbolt.co/admin/industry2")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -133,20 +208,29 @@ const Sub_Catagory = () => {
     const editdata = {
       categoryname: data.categoryname,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch(`https://rsapp.bringin.io/category2_update/${edit._id}`, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(editdata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+      fetch(`https://rsapp.unbolt.co/category2_update/${edit._id}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+  
+        },
+        body: JSON.stringify(editdata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
   };
   if (isLoding === false) {
     return (
@@ -159,13 +243,13 @@ const Sub_Catagory = () => {
     <div>
       <div>
         <div>
-          <Button className="bg-[#0077B5] btn" onClick={showModal}>
-            Add Categoris Name
-          </Button>
+          <p className="bg-[#0077B5] w-[220px] p-[2px] rounded cursor-pointer  text-center  text-white" onClick={showModal}>
+            Add Sub-Industry Name
+          </p>
         </div>
         <div>
           <Modal
-            title=" Add An Industry"
+            title=" Add An Sub-Industry"
             open={isModalOpen}
             onOk={handleOk}
             onCancel={handleCancel}
@@ -177,7 +261,7 @@ const Sub_Catagory = () => {
                     <div className="form-control w-full ">
                       <label className="label">
                         {" "}
-                        <span className="label-text">Sub-Catagories Name</span>
+                        <span className="label-text">Sub-Industry Name</span>
                       </label>
                       <input
                         type="text"
@@ -195,7 +279,7 @@ const Sub_Catagory = () => {
                     <div className="form-control w-full ">
                       <label className="label">
                         {" "}
-                        <span className="label-text">Select a Catagories </span>
+                        <span className="label-text">Select a                       New Industry </span>
                       </label>
                       <select
                         {...register("industryid")}
@@ -229,16 +313,16 @@ const Sub_Catagory = () => {
           <div className="flex flex-col">
             <div className=" ">
               <div className=" inline-block py-2 ">
-                <div className="overflow-hidden">
+                <div className="h-[650px] overflow-y-auto">
                   <table className=" text-left text-sm font-light  ">
-                    <thead className="border-b bg-gray-100 text-[18px] font-medium dark:border-neutral-500 ">
+                    <thead className="border-b bg-gray-100 text-[18px] font-medium dark:border-neutral-500 sticky top-[0px]">
                       <tr>
                         <th scope="col" className="px-6 py-4">
                           No
                         </th>
                         <th scope="col" className="px-6 py-4">
                           {" "}
-                          Catagories
+                          Sub-Industry
                         </th>
                         {/* <th scope="col" className="px-6 py-4">
                           {" "}
@@ -246,7 +330,7 @@ const Sub_Catagory = () => {
                         </th> */}
                         <th scope="col" className="px-6 py-4">
                           {" "}
-                          Sub-Catagories
+                          New Industry
                         </th>
                         <th scope="col" className="px-6 py-4  text-">
                           Edit
@@ -293,13 +377,16 @@ const Sub_Catagory = () => {
                             </div>
                           </td>
                           <td>
+                          <div className="flex justify-center">
+
                             <label
                               onClick={() => setEdit(ca)}
                               htmlFor="categoryname-modal"
-                              className="btn btn-sm btn-error"
+                              className=" px-[4px] py-[3px] rounded cursor-pointer btn-error text-white text-[13px]"
                             >
                               Edit
                             </label>
+</div>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 text-center">
                             <button

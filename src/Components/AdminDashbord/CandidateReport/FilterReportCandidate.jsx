@@ -4,7 +4,7 @@ const FilterReportCandidate = ({ setItems, data }) => {
   const [industry, setIndustry] = useState([]);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/industry")
+    fetch("https://rsapp.unbolt.co/admin/industry")
       .then((res) => res.json())
       .then((data) => {
         setIndustry(data);
@@ -15,7 +15,7 @@ const FilterReportCandidate = ({ setItems, data }) => {
 
   const [salaries, setSalaries] = useState([]);
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/salarie")
+    fetch("https://rsapp.unbolt.co/admin/salarie")
       .then((res) => res.json())
       .then((data) => {
         setSalaries(data);
@@ -26,7 +26,7 @@ const FilterReportCandidate = ({ setItems, data }) => {
 
   const [educationlavel, setEducationlavel] = useState([]);
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/education_lavel")
+    fetch("https://rsapp.unbolt.co/education_lavel")
       .then((res) => res.json())
       .then((data) => {
         setEducationlavel(data);
@@ -38,7 +38,7 @@ const FilterReportCandidate = ({ setItems, data }) => {
   const [experince, setExperince] = useState([]);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin_exprience")
+    fetch("https://rsapp.unbolt.co/admin_exprience")
       .then((res) => res.json())
       .then((data) => {
         setExperince(data);
@@ -171,7 +171,7 @@ const FilterReportCandidate = ({ setItems, data }) => {
               <div className="p-5">
                 <div className="flex justify-between">
                 <div className="mt-5">
-                  <p className="text-[14px] w-[130px] font-medium bg-[#0077B5] text-white p-2 rounded rounded-[20px]">
+                  <p className="text-[13px] w-[130px] font-medium bg-[#0077B5] text-white px-[12px] py-1 rounded rounded-[20px]">
                     <p className="flex gap-1">
                     Experience <span>Level</span>
                     </p>
@@ -193,8 +193,8 @@ const FilterReportCandidate = ({ setItems, data }) => {
                           onClick={() => handleExperienceClick(exp?.name)}
                           className={
                             isActiveEcprience == exp?.name
-                              ? "border border-[1px] m-1.5 text-[14px] bg-[#0077B5] text-white rouunded rounded-[30px] px-2"
-                              : "border border-[1px] m-1.5 text-[14px] hover:bg-[#0077B5] hover:text-white rouunded rounded-[30px] px-2"
+                              ? "border border-[1px] m-1.5 text-[13px] bg-[#0077B5] text-white rouunded rounded-[30px] px-2"
+                              : "border border-[1px] m-1.5 text-[13px] hover:bg-[#0077B5] hover:text-white rouunded rounded-[30px] px-2"
                           }
                         >
                           {exp?.name}
@@ -221,7 +221,7 @@ const FilterReportCandidate = ({ setItems, data }) => {
                 </div>
                 
                 <div className="mt-5">
-                  <p className="text-[14px] w-[120px] font-medium bg-[#0077B5] text-white p-2 rounded rounded-[20px]">
+                  <p className="text-[13px] w-[120px] font-medium bg-[#0077B5] text-white px-[10px] py-1 rounded rounded-[20px]">
                     <p className="flex gap-1">
                       Education <span>Level</span>
                     </p>
@@ -232,7 +232,7 @@ const FilterReportCandidate = ({ setItems, data }) => {
                     <button
                           onClick={educationAll}
                           className={
-                            "border border-[1px] m-1.5 text-[14px] hover:bg-[#0077B5] hover:text-white rouunded rounded-[30px] px-2"
+                            "border border-[1px] m-1.5 text-[13px] hover:bg-[#0077B5] hover:text-white rouunded rounded-[30px] px-2"
                           }
                         >
                           All
@@ -243,8 +243,8 @@ const FilterReportCandidate = ({ setItems, data }) => {
                           onClick={() => handleEducationClick(edu?.name)}
                           className={
                             isActiveEducation == edu?.name
-                              ? "border border-[1px] m-1.5 text-[14px] bg-[#0077B5] text-white rouunded rounded-[30px] px-2"
-                              : "border border-[1px] m-1.5 text-[14px] hover:bg-[#0077B5] hover:text-white rouunded rounded-[30px] px-2"
+                              ? "border border-[1px] m-1.5 text-[13px] bg-[#0077B5] text-white rouunded rounded-[30px] px-2"
+                              : "border border-[1px] m-1.5 text-[13px] hover:bg-[#0077B5] hover:text-white rouunded rounded-[30px] px-2"
                           }
                         >
                           {edu?.name}
@@ -254,7 +254,7 @@ const FilterReportCandidate = ({ setItems, data }) => {
                   </div>
                 </div>
                 <div className="mt-5">
-                  <p className="text-[14px] w-[60px] font-medium bg-[#0077B5] text-white p-2 rounded rounded-[20px]">
+                  <p className="text-[13px] w-[60px] font-medium bg-[#0077B5] text-white px-[10px] py-1  rounded rounded-[20px]">
                     Salary
                   </p>
 
@@ -274,8 +274,8 @@ const FilterReportCandidate = ({ setItems, data }) => {
                           onClick={() => handleSalaryClick(sa?.salary)}
                           className={
                             isActivesalary == sa?.salary
-                              ? "border border-[1px] m-1.5 text-[14px] bg-[#0077B5] text-white rouunded rounded-[30px] px-2"
-                              : "border border-[1px] m-1.5 text-[14px] hover:bg-[#0077B5] hover:text-white rouunded rounded-[30px] px-2"
+                              ? "border border-[1px] m-1.5 text-[13px] bg-[#0077B5] text-white rouunded rounded-[30px] px-2"
+                              : "border border-[1px] m-1.5 text-[13px] hover:bg-[#0077B5] hover:text-white rouunded rounded-[30px] px-2"
                           }
                         >
                           {sa?.salary}
@@ -288,7 +288,7 @@ const FilterReportCandidate = ({ setItems, data }) => {
                   </div>
                 </div>
                 <div className="mt-5">
-                  <p className="text-[14px] w-[110px] font-medium bg-[#0077B5] text-white p-2 rounded rounded-[20px]">
+                  <p className="text-[13px] w-[110px] font-medium bg-[#0077B5] text-white px-[15px] py-1 rounded rounded-[20px]">
                     Job Industry
                   </p>
 

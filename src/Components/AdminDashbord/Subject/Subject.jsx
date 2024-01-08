@@ -1,4 +1,3 @@
-import { Button, Modal } from "antd";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -15,7 +14,7 @@ const Subject = () => {
 
   const [isLoding, setIsLoding] = useState(false);
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/subject")
+    fetch("https://rsapp.unbolt.co/admin/subject")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -39,27 +38,44 @@ const Subject = () => {
       name: data.name,
       digree: d,
     };
-    console.log(subjectdata);
-    fetch("https://rsapp.bringin.io/subject_add", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(subjectdata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+      console.log(subjectdata);
+      fetch("https://rsapp.unbolt.co/subject_add", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(subjectdata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
   };
 
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
-    if (proced) {
-      fetch(`https://rsapp.bringin.io/admin/subject/${id}`, {
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if (!proced && token === null) {
+      console.log("token not found");
+    } else {
+      fetch(`https://rsapp.unbolt.co/admin/subject/${id}`, {
         method: "DELETE",
+        headers:{
+          Authorization: `Bearer ${token}`,
+        }
       })
         .then((res) => res.json())
         .then((data) => {
@@ -105,7 +121,7 @@ const Subject = () => {
 
   const [educationlavel, setEducationlavel] = useState([]);
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/digree")
+    fetch("https://rsapp.unbolt.co/admin/digree")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -117,7 +133,7 @@ const Subject = () => {
 
   const [digree, setDigree] = useState([]);
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/education_lavel")
+    fetch("https://rsapp.unbolt.co/education_lavel")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -164,20 +180,29 @@ const Subject = () => {
     const editdata = {
       name: data.name,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch(`https://rsapp.bringin.io/subject_update/${edit._id}`, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(editdata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+
+      fetch(`https://rsapp.unbolt.co/subject_update/${edit._id}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editdata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
   };
 
   if (isLoding === false) {

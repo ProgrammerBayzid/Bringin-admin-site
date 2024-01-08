@@ -18,7 +18,7 @@ const CompanyVerifyDetails = () => {
     const [premium, setPremium] = useState([]);
 
     useEffect(() => {
-      fetch(`https://rsapp.bringin.io/verifyRecruterCompny?_id=${userid}`)
+      fetch(`https://rsapp.unbolt.co/verifyRecruterCompny?_id=${userid}`)
         .then((res) => res.json())
         .then((data) => {
         //   setIsLoding(true);

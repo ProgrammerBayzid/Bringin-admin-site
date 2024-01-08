@@ -14,7 +14,7 @@ const JobTitle = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/jobtitle")
+    fetch("https://rsapp.unbolt.co/jobtitle")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -37,7 +37,7 @@ const JobTitle = () => {
       published_date: new Date().toLocaleString(),
     };
 
-    fetch("https://rsapp.bringin.io/jobtitle", {
+    fetch("https://rsapp.unbolt.co/jobtitle", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -57,7 +57,7 @@ const JobTitle = () => {
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
     if (proced) {
-      fetch(`https://rsapp.bringin.io/jobtitle/${id}`, {
+      fetch(`https://rsapp.unbolt.co/jobtitle/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -112,7 +112,7 @@ const JobTitle = () => {
       name: data.name,
     };
 
-    fetch(`https://rsapp.bringin.io/jobtitle_update/${edit._id}`, {
+    fetch(`https://rsapp.unbolt.co/jobtitle_update/${edit._id}`, {
       method: "PATCH",
       headers: {
         "content-type": "application/json",

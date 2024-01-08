@@ -6,7 +6,7 @@ const useWeb = (email) => {
 
   useEffect(() => {
     if (email) {
-      fetch(`https://rsapp.bringin.io/user_web/${email}`)
+      fetch(`https://rsapp.unbolt.co/user_web/${email}`)
         .then((res) => res.json())
         .then((data) => {
           setIsWeb(data.isWeb);

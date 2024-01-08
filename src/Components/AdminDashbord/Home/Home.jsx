@@ -11,8 +11,9 @@ const Home = () => {
 
     const sentAppAdminModaretorRequest = (_id) => {
         try {
-          fetch(`https://rsapp.bringin.io/appadmin/${_id}`, {
+          fetch(`https://rsapp.unbolt.co/appadmin/${_id}`, {
             method: "POST",
+            
           })
             .then((res) => res.json())
             .then((data) => {
@@ -31,7 +32,7 @@ const Home = () => {
 
 
       const sentWebAdminModaretorRequest = (_id) => {
-        fetch(`https://rsapp.bringin.io/webadmin/${_id}`, {
+        fetch(`https://rsapp.unbolt.co/webadmin/${_id}`, {
           method: "POST",
         })
           .then((res) => res.json())
@@ -55,12 +56,11 @@ const Home = () => {
             <div className='max-w-xl mb-6 lg:mt-8'>
 
                 <h2 className='switeh max-w-lg mb-6 font-sans text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-none'>
-                    We have everything you need<br className='hidden md:block' /> to learn anything {' '}
-                    <span className='inline-block text-blue-400'>Best E-Learning  Platform</span>
+                    <br className='hidden md:block' />  {' '}
+                    <span className='inline-block text-blue-400'></span>
                 </h2>
                 <p className='switeh text-base text-gray-700 md:text-lg'>
-                    Skiles are a uniquely portable magic. Skiles serve to show a man
-                    that those original thoughts of his aren’t very new after all.
+                  
                 </p>
             </div>
             <div className='flex flex-col items-center md:flex-row'>

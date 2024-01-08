@@ -17,7 +17,7 @@ const ProfileVerifyDetails = () => {
   const [profileVerifydocument, setProfileVerifydocument] = useState([]);
 
   useEffect(() => {
-    fetch(`https://rsapp.bringin.io/verifyProfiledocument?userid=${_id}`)
+    fetch(`https://rsapp.unbolt.co/verifyProfiledocument?userid=${_id}`)
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -43,7 +43,7 @@ const ProfileVerifyDetails = () => {
   const [companyverify, setCompany_verify] = useState([]);
 
   useEffect(() => {
-    fetch(`https://rsapp.bringin.io/company_varify?userid=${_id}`)
+    fetch(`https://rsapp.unbolt.co/company_varify?userid=${_id}`)
       .then((res) => res.json())
       .then((data) => {
         //   setIsLoding(true);
@@ -57,7 +57,7 @@ const ProfileVerifyDetails = () => {
   // const [companybyprofile, setcompanybyprofile] = useState([]);
 
   // useEffect(() => {
-  //   fetch(`https://rsapp.bringin.io/verifyRecruterCompny?_id=${_id}`)
+  //   fetch(`https://rsapp.unbolt.co/verifyRecruterCompny?_id=${_id}`)
   //     .then((res) => res.json())
   //     .then((data) => {
   //       //   setIsLoding(true);
@@ -70,7 +70,7 @@ const ProfileVerifyDetails = () => {
 
   const makeVerifide = (_id) => {
     try {
-      fetch(`https://rsapp.bringin.io/verifyRecruterProfile/${_id}`, {
+      fetch(`https://rsapp.unbolt.co/verifyRecruterProfile/${_id}`, {
         method: "PATCH",
       })
         .then((res) => res.json())
@@ -87,7 +87,7 @@ const ProfileVerifyDetails = () => {
   };
 
   const handelMakeVerifide = (_id) => {
-    fetch(`https://rsapp.bringin.io/verifyRecruterCompny/${_id}`, {
+    fetch(`https://rsapp.unbolt.co/verifyRecruterCompny/${_id}`, {
       method: "PATCH",
     })
       .then((res) => res.json())
@@ -169,7 +169,7 @@ const ProfileVerifyDetails = () => {
                   <div>
                     <img
                       className="rounded rounded-full w-[92px] h-[92px] ml-1 mt-2 mb-5"
-                      src={`https://rsapp.bringin.io/${profileVarify?.image}`}
+                      src={`https://rsapp.unbolt.co/${profileVarify?.image}`}
                     />
                     <div>
                       {profileVarify?.other?.profile_verify == false ? (
@@ -261,14 +261,14 @@ const ProfileVerifyDetails = () => {
                   <Image
                     width={200}
                     height={135}
-                    src={`https://rsapp.bringin.io/${path}`}
+                    src={`https://rsapp.unbolt.co/${path}`}
                   />
                   <Image
                     width={200}
                     height={135}
-                    src={`https://rsapp.bringin.io/${companyverify?.path}`}
+                    src={`https://rsapp.unbolt.co/${companyverify?.path}`}
                   />
-                  {/* <embed src='https://rsapp.bringin.io/resumes/my-resume.pdf' type="application/pdf" width="50%" height="110px" /> */}
+                  {/* <embed src='https://rsapp.unbolt.co/resumes/my-resume.pdf' type="application/pdf" width="50%" height="110px" /> */}
                 </div>
               </div>
 

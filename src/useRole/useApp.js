@@ -6,7 +6,7 @@ const useApp = (email) => {
 
   useEffect(() => {
     if (email) {
-      fetch(`https://rsapp.bringin.io/user_app/${email}`)
+      fetch(`https://rsapp.unbolt.co/user_app/${email}`)
         .then((res) => res.json())
         .then((data) => {
           setIsApp(data.isApp);

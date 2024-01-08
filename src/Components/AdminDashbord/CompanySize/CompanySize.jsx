@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { Button, Modal } from "antd";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
-import { AiFillDelete, AiTwotoneEdit } from "react-icons/ai";
+import { AiFillDelete,  } from "react-icons/ai";
 import Spinner from "../../Spinner/Spinner";
 import CompanysizeEditModal from "./CompanysizeEditModal";
 
@@ -13,7 +13,7 @@ const CompanySize = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admincompanysize")
+    fetch("https://rsapp.unbolt.co/admincompanysize")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -36,28 +36,49 @@ const CompanySize = () => {
       published_date: new Date().toLocaleString(),
     };
 
-    fetch("https://rsapp.bringin.io/companySize_add", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(companySizedata),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data) {
-          setRefresh(!refresh);
-        }
-        e.target.reset();
-        console.log(data);
-      });
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+    
+    
+    
+      fetch("https://rsapp.unbolt.co/companySize_add", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(companySizedata),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data) {
+            setRefresh(!refresh);
+          }
+          e.target.reset();
+          console.log(data);
+        });
+    }
+
   };
 
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
-    if (proced) {
-      fetch(`https://rsapp.bringin.io/admincompanysize/${id}`, {
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if (!proced && token === null) {
+      console.log("token not found");
+    } else {
+
+      fetch(`https://rsapp.unbolt.co/admincompanysize/${id}`, {
         method: "DELETE",
+        headers:{
+          Authorization: `Bearer ${token}`,
+        }
       })
         .then((res) => res.json())
         .then((data) => {
@@ -85,19 +106,59 @@ const CompanySize = () => {
 
   const dragItem = useRef(null);
   const dragOverItem = useRef(null);
+
   const handelSort = () => {
-    let _companysize = [...companysize];
-    //remove and save the dragged item content
-    const draggedItemContent = _companysize.splice(dragItem.current, 1)[0];
-    //switch the position
-    _companysize.splice(dragOverItem.current, 0, draggedItemContent);
 
-    //reset the position ref
-    dragItem.current = null;
-    dragOverItem.current = null;
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    //update the actual array
-    setCompanySize(_companysize);
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+    
+    
+    
+      let _companysize = [...companysize];
+      // Remove and save the dragged item content
+      const draggedItemContent = _companysize.splice(dragItem.current, 1)[0];
+      // Switch the position
+      _companysize.splice(dragOverItem.current, 0, draggedItemContent);
+    
+      // Reset the position refs
+      dragItem.current = null;
+      dragOverItem.current = null;
+    
+      // Prepare data for the API request
+      const updateData = _companysize.map((category, index) => ({
+        id: category._id, // Replace with the actual identifier property
+        sortOrder: index + 1, // Update the sort order
+      }));
+    
+      // Update the actual array
+      setCompanySize(_companysize);
+    
+      // Make the API request to update the category order
+      fetch("https://rsapp.unbolt.co/admin/companysize_update_bulk", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+
+        },
+        body: JSON.stringify(updateData),
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log("Category order updated successfully.");
+          } else {
+            console.error("Category order update failed.");
+          }
+        })
+        .catch((error) => {
+          console.error("API request error:", error);
+        });
+    }
+    
   };
 
   const [edit, setEdit] = useState(null);
@@ -109,20 +170,31 @@ const CompanySize = () => {
     const editdata = {
       size: data.size,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch(`https://rsapp.bringin.io/company_size_update/${edit._id}`, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(editdata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+
+
+      fetch(`https://rsapp.unbolt.co/company_size_update/${edit._id}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(editdata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
+
   };
   if (isLoding === false) {
     return (

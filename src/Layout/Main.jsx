@@ -1,21 +1,19 @@
-import { Outlet, useLocation } from 'react-router-dom'
-import Header from '../Components/ShereComponent/Header/Footer/Header'
-import { useEffect } from 'react';
+import { Outlet, useLocation } from "react-router-dom";
+import Header from "../Components/ShereComponent/Header/Footer/Header";
+import { useEffect } from "react";
 
 const Main = () => {
-    const { pathname } = useLocation();
+  const { pathname } = useLocation();
 
-    useEffect(() => {
-      window.scrollTo(0, 0);
-    }, [pathname]);
-    return (
-        <div>
-            <Header></Header>
-            <Outlet></Outlet>
-         
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return (
+    <div>
+      <Header></Header>
+      <Outlet></Outlet>
+    </div>
+  );
+};
 
-        </div>
-    )
-}
-
-export default Main
+export default Main;

@@ -9,7 +9,7 @@ const AllAdminUser = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/all_admin_user")
+    fetch("https://rsapp.unbolt.co/all_admin_user")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -24,7 +24,7 @@ const AllAdminUser = () => {
 
   const AppAdminModaretorRequestAccept = (_id) => {
     try {
-      fetch(`https://rsapp.bringin.io/v_appadmin/${_id}`, {
+      fetch(`https://rsapp.unbolt.co/v_appadmin/${_id}`, {
         method: "POST",
       })
         .then((res) => res.json())
@@ -33,8 +33,6 @@ const AllAdminUser = () => {
             toast.success("App Moderator Request Accept");
             console.log(data);
             setRefresh(!refresh)
-
-
           }
         })
         .catch((error) => console.error(error));
@@ -45,7 +43,7 @@ const AllAdminUser = () => {
 
   const sentAppAdminModaretorRequest = (_id) => {
     try {
-      fetch(`https://rsapp.bringin.io/appadmin/${_id}`, {
+      fetch(`https://rsapp.unbolt.co/appadmin/${_id}`, {
         method: "POST",
       })
         .then((res) => res.json())
@@ -72,7 +70,7 @@ const AllAdminUser = () => {
 
 
   const WebAdminModaretorRequestAccept = (_id) => {
-    fetch(`https://rsapp.bringin.io/v_webadmin/${_id}`, {
+    fetch(`https://rsapp.unbolt.co/v_webadmin/${_id}`, {
       method: "POST",
     })
       .then((res) => res.json())
@@ -92,7 +90,7 @@ const AllAdminUser = () => {
 
 
   const sentWebAdminModaretorRequest = (_id) => {
-    fetch(`https://rsapp.bringin.io/webadmin/${_id}`, {
+    fetch(`https://rsapp.unbolt.co/webadmin/${_id}`, {
       method: "POST",
     })
       .then((res) => res.json())

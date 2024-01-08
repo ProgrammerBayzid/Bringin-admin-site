@@ -1,4 +1,4 @@
-import { Button, Modal } from "antd";
+import {  Modal } from "antd";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -15,7 +15,7 @@ const CategoryAdd = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/category")
+    fetch("https://rsapp.unbolt.co/admin/category")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -37,27 +37,48 @@ const CategoryAdd = () => {
       categoryname: data.categoryname,
       industryid: data.industryid,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch("https://rsapp.bringin.io/categoryadd", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(catagoridata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+      fetch("https://rsapp.unbolt.co/categoryadd", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+
+        },
+        body: JSON.stringify(catagoridata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
+
   };
 
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
-    if (proced) {
-      fetch(`https://rsapp.bringin.io/admin/category/${id}`, {
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if (!proced && token === null) {
+      console.log("token not found");
+    } else {
+
+       
+      fetch(`https://rsapp.unbolt.co/admin/category/${id}`, {
         method: "DELETE",
+        headers:{
+          Authorization: `Bearer ${token}`,
+
+        }
       })
         .then((res) => res.json())
         .then((data) => {
@@ -85,25 +106,64 @@ const CategoryAdd = () => {
 
   const dragItem = useRef(null);
   const dragOverItem = useRef(null);
+
+
   const handelSort = () => {
-    let _category = [...category];
-    //remove and save the dragged item content
-    const draggedItemContent = _category.splice(dragItem.current, 1)[0];
-    //switch the position
-    _category.splice(dragOverItem.current, 0, draggedItemContent);
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    //reset the position ref
-    dragItem.current = null;
-    dragOverItem.current = null;
+    if ( token === null) {
+      console.log("token not found");
+    } else {
 
-    //update the actual array
-    setCategory(_category);
+
+
+      let _category = [...category];
+      // Remove and save the dragged item content
+      const draggedItemContent = _category.splice(dragItem.current, 1)[0];
+      // Switch the position
+      _category.splice(dragOverItem.current, 0, draggedItemContent);
+    
+      // Reset the position refs
+      dragItem.current = null;
+      dragOverItem.current = null;
+    
+      // Prepare data for the API request
+      const updateData = _category.map((category, index) => ({
+        id: category._id, // Replace with the actual identifier property
+        sortOrder: index + 1, // Update the sort order
+      }));
+    
+      // Update the actual array
+      setCategory(_category);
+    
+      // Make the API request to update the category order
+      fetch("https://rsapp.unbolt.co/admin/category_update_bulk", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+
+        },
+        body: JSON.stringify(updateData),
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log("Category order updated successfully.");
+          } else {
+            console.error("Category order update failed.");
+          }
+        })
+        .catch((error) => {
+          console.error("API request error:", error);
+        });
+    }
   };
 
   const [industry, setIndustry] = useState([]);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/industry")
+    fetch("https://rsapp.unbolt.co/admin/industry")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -134,19 +194,31 @@ const CategoryAdd = () => {
       categoryname: data.categoryname,
     };
 
-    fetch(`https://rsapp.bringin.io/category_update/${edit._id}`, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(editdata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+
+      fetch(`https://rsapp.unbolt.co/category_update/${edit._id}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+
+        },
+        body: JSON.stringify(editdata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
+
   };
   if (isLoding === false) {
     return (
@@ -159,13 +231,13 @@ const CategoryAdd = () => {
     <div>
       <div>
         <div>
-          <Button className="bg-[#0077B5] btn" onClick={showModal}>
-            Add Categoris Name
-          </Button>
+          <p className="bg-[#0077B5] w-[220px] p-[2px] rounded cursor-pointer  text-center  text-white" onClick={showModal}>
+            Add Sub-Categories Name
+          </p>
         </div>
         <div>
           <Modal
-            title=" Add An Industry"
+            title=" Add An Sub-Categories"
             open={isModalOpen}
             onOk={handleOk}
             onCancel={handleCancel}
@@ -177,7 +249,7 @@ const CategoryAdd = () => {
                     <div className="form-control w-full ">
                       <label className="label">
                         {" "}
-                        <span className="label-text">Category Name</span>
+                        <span className="label-text">Sub-Categories Name</span>
                       </label>
                       <input
                         type="text"
@@ -195,7 +267,7 @@ const CategoryAdd = () => {
                     <div className="form-control w-full ">
                       <label className="label">
                         {" "}
-                        <span className="label-text">Select a Industry </span>
+                        <span className="label-text">Select a Categories </span>
                       </label>
                       <select
                         {...register("industryid")}
@@ -229,16 +301,16 @@ const CategoryAdd = () => {
           <div className="flex flex-col">
             <div className=" ">
               <div className=" inline-block py-2 ">
-                <div className="overflow-hidden">
+                <div className="h-[650px] overflow-y-auto">
                   <table className=" text-left text-sm font-light  ">
-                    <thead className="border-b bg-gray-100 text-[18px] font-medium dark:border-neutral-500 ">
+                    <thead className="border-b bg-gray-100 text-[18px] font-medium dark:border-neutral-500 sticky top-[0px]">
                       <tr>
                         <th scope="col" className="px-6 py-4">
                           No
                         </th>
                         <th scope="col" className="px-6 py-4">
                           {" "}
-                          Catagoris
+                          Sub-Categories
                         </th>
                         <th scope="col" className="px-6 py-4">
                           {" "}
@@ -246,7 +318,10 @@ const CategoryAdd = () => {
                         </th>
                         <th scope="col" className="px-6 py-4">
                           {" "}
-                          Industry
+                          <div className="flex justify-center">
+
+                          Categories
+                          </div>
                         </th>
                         <th scope="col" className="px-6 py-4  text-">
                           Edit
@@ -282,6 +357,8 @@ const CategoryAdd = () => {
                             ))}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 font-medium">
+                          <div className="flex justify-center">
+
                             <div>
                               {ca?.industryid?.industryname ? (
                                 <p className="my-2">
@@ -291,15 +368,19 @@ const CategoryAdd = () => {
                                 <p>Null</p>
                               )}
                             </div>
+</div>
                           </td>
                           <td>
+                            <div className="flex justify-center">
+
                             <label
                               onClick={() => setEdit(ca)}
                               htmlFor="categoryname-modal"
-                              className="btn btn-sm btn-error"
-                            >
+                              className=" px-[4px] py-[3px] rounded cursor-pointer btn-error text-white text-[13px]"
+                              >
                               Edit
                             </label>
+                            </div>
                           </td>
                           <td className="whitespace-nowrap px-6 py-4 text-center">
                             <button

@@ -15,8 +15,10 @@ const Layout = () => {
              <div >
              <Header></Header>
                <div className="flex gap-10">
-               <SideNav></SideNav>
-                <div className="mt-5 w-full">
+             <div className="">
+             <SideNav></SideNav>
+             </div>
+                <div className="mt-2 w-full">
                 <Outlet></Outlet>
                 </div>
                </div>

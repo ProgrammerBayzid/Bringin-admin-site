@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../Context/Context";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { setAuthToken } from "../../useRole/useToken";
 
 const Login = () => {
   const { login, forgetPassword } = useContext(AuthContext);
@@ -26,13 +28,15 @@ const Login = () => {
       .then((res) => {
         setemailError("");
         setLoginError("");
+        setAuthToken(data.email);
         navigate(from, { replace: true });
+        setShowPassword(false); // Reset password visibility after successful login
         alert.success("Login Success");
       })
       .catch((error) => {
         console.log(error);
         setemailError("Invalid Email");
-        setLoginError("wrong password");
+        setLoginError("Wrong password");
       });
   };
 
@@ -42,6 +46,11 @@ const Login = () => {
         alert.success("Check your email To reset password");
       })
       .catch((error) => alert.error(error.message));
+  };
+  const [showPassword, setShowPassword] = useState(false);
+
+  const show = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -72,18 +81,31 @@ const Login = () => {
             <label className="label">
               <span className="label-text">Password</span>
             </label>
-            <input
-              type="password"
-              {...register("password", {
-                required: "Password is required",
-                minLength: {
-                  value: 6,
-                  message: "Password must be 6 characters or longer",
-                },
-              })}
-              placeholder="Password"
-              className="input input-bordered w-full max-w-xs"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be 6 characters or longer",
+                  },
+                })}
+                placeholder="Password"
+                className="input input-bordered w-full max-w-xs"
+              />
+              <button
+                type="button" // Prevent the button from triggering form submission
+                className="label-text absolute inset-y-0 right-2"
+                onClick={show}
+              >
+                {showPassword ? (
+                  <AiOutlineEyeInvisible></AiOutlineEyeInvisible>
+                ) : (
+                  <AiOutlineEye></AiOutlineEye>
+                )}
+              </button>
+            </div>
           </div>
           <p className="text-red-500	">{loginError}</p>
           <label className="label">
@@ -103,14 +125,7 @@ const Login = () => {
             type="submit"
           />
         </form>
-        <p>
-          New to Bringin Admin Panel{" "}
-          <Link className="text-secondary" to="/singUp">
-            Create new Account
-          </Link>
-        </p>
-        <div className="divider">OR</div>
-      </div>
+             </div>
     </div>
   );
 };

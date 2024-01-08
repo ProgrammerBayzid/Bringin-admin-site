@@ -6,7 +6,7 @@ const useAdmin = (email) => {
 
   useEffect(() => {
     if (email) {
-      fetch(`https://rsapp.bringin.io/user_main/${email}`)
+      fetch(`https://rsapp.unbolt.co/user_main/${email}`)
         .then((res) => res.json())
         .then((data) => {
           setIsAdmin(data.isAdmin);

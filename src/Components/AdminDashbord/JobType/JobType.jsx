@@ -13,7 +13,7 @@ const JobType = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/jobtype")
+    fetch("https://rsapp.unbolt.co/admin/jobtype")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -35,30 +35,49 @@ const JobType = () => {
       worktype: data.worktype,
       published_date: new Date().toLocaleString(),
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch("https://rsapp.bringin.io/jobtype", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(jobTypedata),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data) {
-          setRefresh(!refresh);
-        }
-        e.target.reset();
-        console.log(data);
+    if ( token === null) {
+      console.log("token not found");
+    } else {
 
-      });
+
+      fetch("https://rsapp.unbolt.co/jobtype", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+
+        },
+        body: JSON.stringify(jobTypedata),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data) {
+            setRefresh(!refresh);
+          }
+          e.target.reset();
+          console.log(data);
+  
+        });
+    }
   };
 
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
-    if (proced) {
-      fetch(`https://rsapp.bringin.io/admin/jobtype/${id}`, {
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if (!proced && token === null) {
+      console.log("token not found");
+    } else {
+      fetch(`https://rsapp.unbolt.co/admin/jobtype/${id}`, {
         method: "DELETE",
+        headers:{
+          Authorization: `Bearer ${token}`,
+
+        }
       })
         .then((res) => res.json())
         .then((data) => {
@@ -90,21 +109,60 @@ const dragItem=useRef(null)
 const dragOverItem=useRef(null)
 
 
-const handelSort=()=>{
-  let _jobType =[...jobType]
-     //remove and save the dragged item content
-     const draggedItemContent = _jobType.splice(dragItem.current, 1)[0];
-     //switch the position
-     _jobType.splice(dragOverItem.current, 0, draggedItemContent);
 
-    //reset the position ref
+
+const handelSort = () => {
+
+  const storedToken = localStorage.getItem("admin_token");
+  const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+  if ( token === null) {
+    console.log("token not found");
+  } else {
+
+
+    let _jobType =[...jobType]
+    // Remove and save the dragged item content
+    const draggedItemContent = _jobType.splice(dragItem.current, 1)[0];
+    // Switch the position
+    _jobType.splice(dragOverItem.current, 0, draggedItemContent);
+  
+    // Reset the position refs
     dragItem.current = null;
     dragOverItem.current = null;
+  
+    // Prepare data for the API request
+    const updateData = _jobType.map((category, index) => ({
+      id: category._id, // Replace with the actual identifier property
+      sortOrder: index + 1, // Update the sort order
+    }));
+  
+    // Update the actual array
+    setJobType(_jobType);
+  
+    // Make the API request to update the category order
+    fetch("https://rsapp.unbolt.co/admin/jobtype_update_bulk", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
 
-    //update the actual array
-    setJobType(_jobType)
-}
+      },
+      body: JSON.stringify(updateData),
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          console.log("Category order updated successfully.");
+        } else {
+          console.error("Category order update failed.");
+        }
+      })
+      .catch((error) => {
+        console.error("API request error:", error);
+      });
+  }
 
+};
 
   if (isLoding === false) {
     return (

@@ -13,7 +13,7 @@ const Company = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/seekercompany")
+    fetch("https://rsapp.unbolt.co/seekercompany")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -35,29 +35,45 @@ const Company = () => {
       name: data.name,
       published_date: new Date().toLocaleString(),
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch("https://rsapp.bringin.io/seekercompany", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(companydata),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data) {
-          setRefresh(!refresh);
-        }
-        e.target.reset();
-        console.log(data);
-      });
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+      fetch("https://rsapp.unbolt.co/seekercompany", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(companydata),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data) {
+            setRefresh(!refresh);
+          }
+          e.target.reset();
+          console.log(data);
+        });
+    }
   };
 
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
-    if (proced) {
-      fetch(`https://rsapp.bringin.io/seekercompany/${id}`, {
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if (!proced &&  token === null) {
+      console.log("token not found");
+    } else {
+      fetch(`https://rsapp.unbolt.co/seekercompany/${id}`, {
         method: "DELETE",
+        headers:{
+          Authorization: `Bearer ${token}`,
+        }
       })
         .then((res) => res.json())
         .then((data) => {
@@ -109,20 +125,29 @@ const Company = () => {
     const editdata = {
       name: data.name,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch(`https://rsapp.bringin.io/company_name_update/${edit._id}`, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(editdata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+
+      fetch(`https://rsapp.unbolt.co/company_name_update/${edit._id}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editdata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
   };
 
   if (isLoding === false) {
@@ -196,9 +221,7 @@ const Company = () => {
                       <th scope="col" className="px-6 py-4">
                         Company
                       </th>
-                      <th scope="col" className="px-6 py-4 text-center">
-                        Action
-                      </th>
+                    
                       <th scope="col" className="px-6 py-4 text-">
                         Edit
                       </th>

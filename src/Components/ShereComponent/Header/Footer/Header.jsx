@@ -72,6 +72,12 @@ function Header() {
                           </Link>
                         )}
                       </Menu.Item>
+                      {
+                        isAdmin && <>
+                        
+                        
+                        
+                        
                       <Menu.Item>
                         {({ active }) => (
                           <Link
@@ -84,6 +90,22 @@ function Header() {
                           </Link>
                         )}
                       </Menu.Item>
+                       <Menu.Item>
+                       {({ active }) => (
+                         <Link
+                           to="/dashboard/all_admin_user"
+                           className={classNames(
+                             "text-black lg:text-[18px] hover:text-[#0077B5] font-semibold ",
+                             "block  mt-[2px]"
+                           )}
+                         >
+                           All Admin User{" "}
+                         </Link>
+                       )}
+                     </Menu.Item>
+                        </>
+
+                      }
                       <Menu.Item>
                         {({ active }) => (
                           <Link
@@ -109,19 +131,7 @@ function Header() {
                         )}
                       </Menu.Item>
 
-                      <Menu.Item>
-                        {({ active }) => (
-                          <Link
-                            to="/dashboard/all_admin_user"
-                            className={classNames(
-                              "text-black lg:text-[18px] hover:text-[#0077B5] font-semibold ",
-                              "block  mt-[2px]"
-                            )}
-                          >
-                            All Admin User{" "}
-                          </Link>
-                        )}
-                      </Menu.Item>
+                     
                     </div>
                   </Menu.Items>
                 </Transition>

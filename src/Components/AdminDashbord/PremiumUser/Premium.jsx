@@ -8,7 +8,7 @@ const Premium = () => {
 
   const [premium, setPremium] = useState([]);
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/premium_user?premium=true")
+    fetch("https://rsapp.unbolt.co/premium_user?premium=true")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -100,7 +100,7 @@ const Premium = () => {
                                 </td>
                                 <td className="whitespace-nowrap px-6 py-4 font-medium">
                                   <div>
-                                    {pre?.premium === true ? (
+                                    {pre?.other?.premium === true ? (
                                       <p className="my-2">Premium</p>
                                     ) : (
                                       <p>Null</p>

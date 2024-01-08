@@ -10,7 +10,7 @@ const CompanyVerify = () => {
   
     const [premium, setPremium] = useState([]);
     useEffect(() => {
-      fetch("https://rsapp.bringin.io/verifyCompny")
+      fetch("https://rsapp.unbolt.co/verifyCompny")
         .then((res) => res.json())
         .then((data) => {
           setIsLoding(true);

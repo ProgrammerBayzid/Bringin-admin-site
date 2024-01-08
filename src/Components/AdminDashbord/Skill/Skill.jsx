@@ -13,7 +13,7 @@ const Skill = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/skill")
+    fetch("https://rsapp.unbolt.co/admin/skill")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -36,7 +36,7 @@ const Skill = () => {
       published_date: new Date().toLocaleString(),
     };
 
-    fetch("https://rsapp.bringin.io/admin/skill", {
+    fetch("https://rsapp.unbolt.co/admin/skill", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -56,7 +56,7 @@ const Skill = () => {
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
     if (proced) {
-      fetch(`https://rsapp.bringin.io/admin/skill/${id}`, {
+      fetch(`https://rsapp.unbolt.co/admin/skill/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -113,7 +113,7 @@ const Skill = () => {
       name: data.name,
     };
 
-    fetch(`https://rsapp.bringin.io/skill_update/${edit._id}`, {
+    fetch(`https://rsapp.unbolt.co/skill_update/${edit._id}`, {
       method: "PATCH",
       headers: {
         "content-type": "application/json",

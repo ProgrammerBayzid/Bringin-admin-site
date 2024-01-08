@@ -15,7 +15,7 @@ const Category = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/industry2")
+    fetch("https://rsapp.unbolt.co/admin/industry2")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -36,27 +36,40 @@ const Category = () => {
     const industrydata = {
       industryname: data.industryname,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch("https://rsapp.bringin.io/industry2add", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(industrydata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    if (token === null) {
+      console.log("token not found");
+    } else {
+      fetch("https://rsapp.unbolt.co/industry2add", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(industrydata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
   };
 
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
-    if (proced) {
-      fetch(`https://rsapp.bringin.io/admin/industry2/${id}`, {
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if (proced && !token) {
+      fetch(`https://rsapp.unbolt.co/admin/industry2/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
         .then((res) => res.json())
         .then((data) => {
@@ -67,6 +80,8 @@ const Category = () => {
             setIndustry(remaining);
           }
         });
+    } else {
+      console.log("token not found");
     }
   };
 
@@ -74,18 +89,50 @@ const Category = () => {
   const dragOverItem = useRef(null);
 
   const handelSort = () => {
-    let _industry = [...industry];
-    //remove and save the dragged item content
-    const draggedItemContent = _industry.splice(dragItem.current, 1)[0];
-    //switch the position
-    _industry.splice(dragOverItem.current, 0, draggedItemContent);
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+    if (token === null) {
+      console.log("token not found");
+    } else {
+      let _industry = [...industry];
+      // Remove and save the dragged item content
+      const draggedItemContent = _industry.splice(dragItem.current, 1)[0];
+      // Switch the position
+      _industry.splice(dragOverItem.current, 0, draggedItemContent);
 
-    //reset the position ref
-    dragItem.current = null;
-    dragOverItem.current = null;
+      // Reset the position refs
+      dragItem.current = null;
+      dragOverItem.current = null;
 
-    //update the actual array
-    setIndustry(_industry);
+      // Prepare data for the API request
+      const updateData = _industry.map((category, index) => ({
+        id: category._id, // Replace with the actual identifier property
+        sortOrder: index + 1, // Update the sort order
+      }));
+
+      // Update the actual array
+      setIndustry(_industry);
+
+      // Make the API request to update the category order
+      fetch("https://rsapp.unbolt.co/admin/industry2_update_bulk", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updateData),
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log("Category order updated successfully.");
+          } else {
+            console.error("Category order update failed.");
+          }
+        })
+        .catch((error) => {
+          console.error("API request error:", error);
+        });
+    }
   };
 
   const showModal = () => {
@@ -111,11 +158,14 @@ const Category = () => {
     const industryeditdata = {
       industryname: data.industryname,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken.replace(/"/g, "");
 
-    fetch(`https://rsapp.bringin.io/industry_update2/${edit._id}`, {
+    fetch(`https://rsapp.unbolt.co/industry_update2/${edit._id}`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(industryeditdata),
     })
@@ -133,13 +183,16 @@ const Category = () => {
     <div>
       <div>
         <div>
-          <Button className="bg-[#0077B5] btn" onClick={showModal}>
-            Add Catagories Name
-          </Button>
+          <p
+            className="bg-[#0077B5] w-[200px] p-[2px] rounded cursor-pointer  text-center  text-white"
+            onClick={showModal}
+          >
+            Add New Industry Name
+          </p>
         </div>
         <div>
           <Modal
-            title=" Add An Industry"
+            title=" Add An New Industry"
             open={isModalOpen}
             onOk={handleOk}
             onCancel={handleCancel}
@@ -151,7 +204,7 @@ const Category = () => {
                     <div className="form-control w-full ">
                       <label className="label">
                         {" "}
-                        <span className="label-text">Catagories Name</span>
+                        <span className="label-text"> New Industry Name</span>
                       </label>
                       <input
                         type="text"
@@ -183,17 +236,17 @@ const Category = () => {
 
       <div>
         <div className="flex flex-col">
-          <div className=" mt-10">
+          <div className=" ">
             <div className="inline-block  py-2 ">
-              <div className="overflow-hidden">
+              <div className="h-[650px] overflow-y-auto">
                 <table className=" text-left text-sm w-[1000px] font-light">
-                  <thead className="border-b bg-gray-100 text-[18px] font-medium  ">
+                  <thead className="border-b bg-gray-100 text-[18px] font-medium sticky top-[0px] ">
                     <tr>
                       <th scope="col" className="px-6 py-4">
                         No
                       </th>
                       <th scope="col" className="px-6 py-4">
-                        Categories
+                        New Industry
                       </th>
                       {/* <th scope="col" className="px-6 py-4">Categoris</th> */}
                       <th scope="col" className="px-6 py-4 text-">
@@ -204,41 +257,42 @@ const Category = () => {
                       </th>
                     </tr>
                   </thead>
-                  {industry.map((ins, i) => (
-                    <tbody
-                      className="text-[15px]"
-                      key={ins._id}
-                      onDragStart={(e) => (dragItem.current = i)}
-                      onDragEnter={(e) => (dragOverItem.current = i)}
-                      onDragEnd={handelSort}
-                      draggable
-                    >
-                      <tr className="border-b bg-gray-50">
-                        <td className="whitespace-nowrap px-6 py-4 font-medium">
-                          {i + 1}
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4 font-medium">
-                          <div>
-                            <p className="my-2"> {ins.industryname}</p>
-                          </div>
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4 font-medium">
-                          <label
-                            onClick={() => setEdit(ins)}
-                            htmlFor="confirmation-modal"
-                            className="btn btn-sm btn-error"
-                          >
-                            Edit
-                          </label>
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4 text-center">
-                          <button onClick={() => handelDeeted(ins._id)}>
-                            <AiFillDelete className="text-red-500"></AiFillDelete>
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  ))}
+                  {industry.length > 0 &&
+                    industry.map((ins, i) => (
+                      <tbody
+                        className="text-[15px]"
+                        key={ins._id}
+                        onDragStart={(e) => (dragItem.current = i)}
+                        onDragEnter={(e) => (dragOverItem.current = i)}
+                        onDragEnd={handelSort}
+                        draggable
+                      >
+                        <tr className="border-b bg-gray-50">
+                          <td className="whitespace-nowrap px-6 py-4 font-medium">
+                            {i + 1}
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4 font-medium">
+                            <div>
+                              <p className="my-2"> {ins.industryname}</p>
+                            </div>
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4 font-medium">
+                            <label
+                              onClick={() => setEdit(ins)}
+                              htmlFor="confirmation-modal"
+                              className=" px-[4px] py-[3px] rounded cursor-pointer btn-error text-white text-[13px]"
+                            >
+                              Edit
+                            </label>
+                          </td>
+                          <td className="whitespace-nowrap px-6 py-4 text-center">
+                            <button onClick={() => handelDeeted(ins._id)}>
+                              <AiFillDelete className="text-red-500"></AiFillDelete>
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    ))}
                 </table>
               </div>
             </div>

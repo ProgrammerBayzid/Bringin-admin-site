@@ -14,7 +14,7 @@ const Experince = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin_exprience")
+    fetch("https://rsapp.unbolt.co/admin_exprience")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -37,28 +37,49 @@ const Experince = () => {
       published_date: new Date().toLocaleString(),
     };
 
-    fetch("https://rsapp.bringin.io/admin_exprience", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(experincedata),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data) {
-          setRefresh(!refresh);
-        }
-        e.target.reset();
-        console.log(data);
-      });
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+
+      fetch("https://rsapp.unbolt.co/admin_exprience", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+
+        },
+        body: JSON.stringify(experincedata),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data) {
+            setRefresh(!refresh);
+          }
+          e.target.reset();
+          console.log(data);
+        });
+    }
+
   };
 
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
-    if (proced) {
-      fetch(`https://rsapp.bringin.io/admin_exprience/${id}`, {
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if (!proced && token === null) {
+      console.log("token not found");
+    } else {
+      fetch(`https://rsapp.unbolt.co/admin_exprience/${id}`, {
         method: "DELETE",
+        headers:{
+          Authorization: `Bearer ${token}`,
+
+        }
       })
         .then((res) => res.json())
         .then((data) => {
@@ -87,19 +108,57 @@ const Experince = () => {
   const dragItem = useRef(null);
   const dragOverItem = useRef(null);
 
+
+
   const handelSort = () => {
-    let _experince = [...experince];
-    //remove and save the dragged item content
-    const draggedItemContent = _experince.splice(dragItem.current, 1)[0];
-    //switch the position
-    _experince.splice(dragOverItem.current, 0, draggedItemContent);
+  
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    //reset the position ref
-    dragItem.current = null;
-    dragOverItem.current = null;
+    if ( token === null) {
+      console.log("token not found");
+    } else {
 
-    //update the actual array
-    setExperince(_experince);
+
+      let _experince = [...experince];
+      // Remove and save the dragged item content
+      const draggedItemContent = _experince.splice(dragItem.current, 1)[0];
+      // Switch the position
+      _experince.splice(dragOverItem.current, 0, draggedItemContent);
+    
+      // Reset the position refs
+      dragItem.current = null;
+      dragOverItem.current = null;
+    
+      // Prepare data for the API request
+      const updateData = _experince.map((category, index) => ({
+        id: category._id, // Replace with the actual identifier property
+        sortOrder: index + 1, // Update the sort order
+      }));
+    
+      // Update the actual array
+      setExperince(_experince);
+    
+      // Make the API request to update the category order
+      fetch("https://rsapp.unbolt.co/admin/exprience_update_bulk", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updateData),
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log("Category order updated successfully.");
+          } else {
+            console.error("Category order update failed.");
+          }
+        })
+        .catch((error) => {
+          console.error("API request error:", error);
+        });
+    }
   };
 
   const [edit, setEdit] = useState(null);
@@ -112,19 +171,31 @@ const Experince = () => {
       name: data.name,
     };
 
-    fetch(`https://rsapp.bringin.io/experince_update/${edit._id}`, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(editdata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+
+
+      fetch(`https://rsapp.unbolt.co/experince_update/${edit._id}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editdata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
+
   };
 
   if (isLoding === false) {

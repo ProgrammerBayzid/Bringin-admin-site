@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLoaderData } from "react-router-dom";
-import Spinner from "../../Spinner/Spinner";
-import { GoVerified } from "react-icons/go";
+
 import { Image } from "antd";
 const ProfileVerifyDetails = ({ modalData, closeModal }) => {
   console.log(modalData);
@@ -10,7 +8,7 @@ const ProfileVerifyDetails = ({ modalData, closeModal }) => {
 
   useEffect(() => {
     fetch(
-      `https://rsapp.bringin.io/verifyprofiledocument?userid=${modalData?._id}`
+      `https://rsapp.unbolt.co/verifyprofiledocument?userid=${modalData?._id}`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -25,7 +23,7 @@ const ProfileVerifyDetails = ({ modalData, closeModal }) => {
   const [companyverify, setCompany_verify] = useState([]);
 
   useEffect(() => {
-    fetch(`https://rsapp.bringin.io/company_varify?userid=${modalData?._id}`)
+    fetch(`https://rsapp.unbolt.co/company_varify?userid=${modalData?._id}`)
       .then((res) => res.json())
       .then((data) => {
         //   setIsLoding(true);
@@ -36,37 +34,8 @@ const ProfileVerifyDetails = ({ modalData, closeModal }) => {
 
   console.log(companyverify);
 
-  // const { path } = companyverify;
-
-  // Separate PDF and image paths
-  const pdfPaths = [];
-  const imagePaths = [];
-
-  for (const document of profileVerifydocument) {
-    if (document.path().endsWith(".pdf")) {
-      pdfPaths.push(document.path);
-    } else if (
-      document.path().endsWith(".png") ||
-      document.path().endsWith(".jpg") ||
-      document.path().endsWith(".jpeg") ||
-      document.path().endsWith(".gif")
-    ) {
-      imagePaths.push(document.path);
-    }
-  }
-
-  for (const document of companyverify) {
-    if (document.path().endsWith(".pdf")) {
-      pdfPaths.push(document.path);
-    } else if (
-      document.path().endsWith(".png") ||
-      document.path().endsWith(".jpg") ||
-      document.path().endsWith(".jpeg") ||
-      document.path().endsWith(".gif")
-    ) {
-      imagePaths.push(document.path);
-    }
-  }
+  const isPDF = companyverify?.path?.toLowerCase().endsWith(".pdf");
+  const isPPDF = profileVerifydocument?.path?.toLowerCase().endsWith(".pdf");
 
   return (
     <div>
@@ -85,75 +54,209 @@ const ProfileVerifyDetails = ({ modalData, closeModal }) => {
             >
               ✕
             </label>
-            <div className="p-3 flex gap-4">
-              <div>
-                <div>
-                  <p className="text-[15px] font-medium text-white bg-[#0077B5] p-1 w-[280px]">
+            <div className="p-3  gap-4">
+              <div className="flex gap-x-4">
+                <div className="mt-[10px]">
+                  <p className="text-[12px] font-medium text-white bg-[#0077B5] p-1 w-[210px]">
                     Company Verification Attachment
                   </p>
-                  <div className="border-dashed border-2 border-[#0077B5] w-[480px] h-[240px] mt-2">
-                    {companyverify?.path ? (
-                      <iframe
-                        src={`https://rsapp.bringin.io/${companyverify?.path}`}
-                        width="475"
-                        height="235"
-                      ></iframe>
+
+                  <div>
+                    {modalData.other.company_docupload === false ? (
+                      <p className="border-dashed border-[1px] border-[#0077B5] w-[400px] h-[260px] mt-2 pl-2 pt-2">
+                        {" "}
+                        No documents submitted <br></br>for Company verify
+                      </p>
                     ) : (
-                      <Image
-                        width={475}
-                        height={235}
-                        src={`https://rsapp.bringin.io/${companyverify?.path}`}
-                      />
+                      <div>
+                        {companyverify?.path === null ? (
+                          <p className="mt-2 text-[14px]">
+                            No documents submitted for profile verify
+                          </p>
+                        ) : (
+                          <div className="border-dashed border-[1px] border-[#0077B5] w-[400px] h-[260px] mt-2">
+                            {isPDF ? (
+                              <div>
+                                <iframe
+                                  src={`https://rsapp.unbolt.co/${companyverify?.path}`}
+                                  width="398"
+                                  height="258"
+                                ></iframe>
+                                <div>
+                                  <a
+                                    href={`https://rsapp.unbolt.co/${companyverify?.path}`}
+                                    download={`downloaded_file.pdf`}
+                                    target="_blank"
+                                  >
+                                    <button
+                                      type="button"
+                                      className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br  focus:outline-none text-[10px]  font-medium rounded-lg  px-2 py-1 text-center mr-2 mb-2 mt-1"
+                                    >
+                                      {" "}
+                                      Download PDF
+                                    </button>
+                                  </a>
+                                </div>
+                              </div>
+                            ) : (
+                              <div>
+                                <Image
+                                  width={398}
+                                  height={258}
+                                  src={`https://rsapp.unbolt.co/${companyverify?.path}`}
+                                />
+                                <div>
+                                  <a
+                                    href={`https://rsapp.unbolt.co/${companyverify?.path}`}
+                                    download={`downloaded_image.png`}
+                                    target="_blank"
+                                  >
+                                    <button
+                                      type="button"
+                                      className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br  focus:outline-none text-[10px]  font-medium rounded-lg  px-2 py-1 text-center mr-2 mb-2 mt-1"
+                                    >
+                                      Download image
+                                    </button>
+                                  </a>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
-                <div className="mt-3">
-                  <p className="text-[15px] font-medium text-white bg-[#0077B5] p-1 w-[350px]">
+                <div className="mt-[10px]">
+                  <p className="text-[12px] font-medium text-white bg-[#0077B5] p-1 w-[250px]">
                     Recruiter Identity Verification Attachment
                   </p>
-                  <div className="border-dashed border-2 border-[#0077B5] w-[480px] h-[240px] mt-2">
-                    {profileVerifydocument?.path ? (
-                      <iframe
-                        src={`https://rsapp.bringin.io/${profileVerifydocument?.path}`}
-                        width="475"
-                        height="235"
-                      ></iframe>
-                    ) : (
-                      <Image
-                        width={475}
-                        height={235}
-                        src={`https://rsapp.bringin.io/${profileVerifydocument?.path}`}
-                      />
-                    )}
-                  </div>
+                  {/* {
+   modalData.other.profile_docupload === false ?
+} */}
+                  {profileVerifydocument?.path === null ? (
+                    <p className="mt-2 text-[14px]">
+                      No documents submitted for profile verify
+                    </p>
+                  ) : (
+                    <div className="border-dashed border-[1px] border-[#0077B5] w-[400px] h-[260px] mt-2">
+                      {isPPDF ? (
+                        <div>
+                          {modalData.other.profile_docupload === true || modalData.other.profile_other_docupload === true ? 
+                          
+                          (
+                            <>
+                              <div>
+                                {profileVerifydocument?.path === null ? (
+                                  <p> </p>
+                                ) : (
+                                  <div>
+                                    <iframe
+                                      src={`https://rsapp.unbolt.co/${profileVerifydocument?.path}`}
+                                      width="398"
+                                      height="258"
+                                    ></iframe>
+
+                                    <div>
+                                      <a
+                                        href={`https://rsapp.unbolt.co/${profileVerifydocument?.path}`}
+                                        download={`downloaded_file.pdf`}
+                                        target="_blank"
+                                      >
+                                        <button
+                                          type="button"
+                                          className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br  focus:outline-none  font-medium rounded-lg text-sm px-2 py-1 text-center mr-2 mb-2 mt-1"
+                                        >
+                                          Download PDF
+                                        </button>
+                                      </a>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </>
+                          )
+                          :
+                          (
+                            <p className="mt-2 w-[400px] pl-2">
+                              {" "}
+                              No documents submitted
+                              <br /> for profile verify
+                            </p>
+                          )
+                          
+                          
+                          }
+                        </div>
+                      ) : (
+                        <div>
+                          {modalData.other.profile_other_docupload === true  ||  modalData.other.profile_docupload === true  ?
+                          
+                          (
+                            <>
+                              <div>
+                                {profileVerifydocument?.path === null ? (
+                                  <p></p>
+                                ) : (
+                                  <div>
+                                    <Image
+                                      width={398}
+                                      height={258}
+                                      src={`https://rsapp.unbolt.co/${profileVerifydocument?.path}`}
+                                    />
+
+                                    <div>
+                                      <a
+                                        href={`https://rsapp.unbolt.co/${profileVerifydocument?.path}`}
+                                        download={`downloaded_image.png`}
+                                        target="_blank"
+                                      >
+                                        <button
+                                          type="button"
+                                          className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br  focus:outline-none text-[10px]  font-medium rounded-lg  px-2 py-1 text-center mr-2 mb-2 mt-1"
+                                        >
+                                          Download image
+                                        </button>
+                                      </a>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </>
+                          )
+                          
+                          
+                          : 
+                          (
+                            <p className="mt-2 w-[400px] pl-2">
+                              {" "}
+                              No documents submitted <br />
+                              for profile verify
+                            </p>
+                          )
+                          
+                          
+                      
+                          
+                          
+                          }
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <div className="h-[100px] w-full mt-10 border-2 border-[#0077B5] ">
-                <div className="p-3">
-                  <p className="text-[18px] border border-1 border-[#0077B5] w-[149px] rounded rounded-[20px] text-center">
-                    LinkedIn Profile
+              <div className=" mt-10  ">
+                <div className="pt-3">
+                  <p className="text-[18px] text-[#212427] font-normal">
+                    LinkedIn Profile:
                   </p>
-                  <p className="text-[18px] ml-1 mt-2">LinkedIn Profile </p>
-                </div>
-              </div>
-              <div>
-                {/* Render your component's content here */}
-                <div>
-                  <h2>PDF Paths:</h2>
-                  <ul>
-                    {pdfPaths.map((path, index) => (
-                      <li key={index}>{path}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h2>Image Paths:</h2>
-                  <ul>
-                    {imagePaths.map((path, index) => (
-                      <li key={index}>{path}</li>
-                    ))}
-                  </ul>
+                  <p className="text-[18px] text-blue-500  mt-1">
+                    <a href={profileVerifydocument?.link} target="_blank">
+                      {profileVerifydocument?.link}
+                    </a>
+                  </p>
                 </div>
               </div>
             </div>
@@ -168,7 +271,7 @@ const ProfileVerifyDetails = ({ modalData, closeModal }) => {
             id="verifi-details-modal"
             className="modal-toggle"
           />
-          <div className="modal  h-[1000px] w-[650px] ml-[280px] shadow-xl mt-10  rounded rounded-[20px]">
+          <div className="modal  h-[1000px] w-[650px] ml-[280px] shadow-xl mt-10  rounded rounded-[20px]"
             <div className="bg-white">
               <div className="p-[100px]">
                 <div>
@@ -184,12 +287,12 @@ const ProfileVerifyDetails = ({ modalData, closeModal }) => {
                             <Image
                               width={500}
                               height={370}
-                              src={`https://rsapp.bringin.io/${modalData?.path}`}
+                              src={`https://rsapp.unbolt.co/${modalData?.path}`}
                             />
                             <Image
                               width={200}
                               height={135}
-                              src={`https://rsapp.bringin.io/${companyverify?.path}`}
+                              src={`https://rsapp.unbolt.co/${companyverify?.path}`}
                             />
                           </div>
                         </div>
@@ -290,7 +393,7 @@ export default ProfileVerifyDetails;
 
 //   useEffect(() => {
 //     fetch(
-//       `https://rsapp.bringin.io/verifyProfiledocument?userid=${modalData?._id}`
+//       `https://rsapp.unbolt.co/verifyProfiledocument?userid=${modalData?._id}`
 //     )
 //       .then((res) => res.json())
 //       .then((data) => {
@@ -316,7 +419,7 @@ export default ProfileVerifyDetails;
 //   const [companyverify, setCompany_verify] = useState([]);
 
 //   useEffect(() => {
-//     fetch(`https://rsapp.bringin.io/company_varify?userid=${modalData?._id}`)
+//     fetch(`https://rsapp.unbolt.co/company_varify?userid=${modalData?._id}`)
 //       .then((res) => res.json())
 //       .then((data) => {
 //         //   setIsLoding(true);
@@ -330,7 +433,7 @@ export default ProfileVerifyDetails;
 //   // const [companybyprofile, setcompanybyprofile] = useState([]);
 
 //   // useEffect(() => {
-//   //   fetch(`https://rsapp.bringin.io/verifyRecruterCompny?_id=${_id}`)
+//   //   fetch(`https://rsapp.unbolt.co/verifyRecruterCompny?_id=${_id}`)
 //   //     .then((res) => res.json())
 //   //     .then((data) => {
 //   //       //   setIsLoding(true);
@@ -343,7 +446,7 @@ export default ProfileVerifyDetails;
 
 //   // const makeVerifide = (_id) => {
 //   //   try {
-//   //     fetch(`https://rsapp.bringin.io/verifyRecruterProfile/${_id}`, {
+//   //     fetch(`https://rsapp.unbolt.co/verifyRecruterProfile/${_id}`, {
 //   //       method: "PATCH",
 //   //     })
 //   //       .then((res) => res.json())
@@ -360,7 +463,7 @@ export default ProfileVerifyDetails;
 //   // };
 
 //   // const handelMakeVerifide = (_id) => {
-//   //   fetch(`https://rsapp.bringin.io/verifyRecruterCompny/${_id}`, {
+//   //   fetch(`https://rsapp.unbolt.co/verifyRecruterCompny/${_id}`, {
 //   //     method: "PATCH",
 //   //   })
 //   //     .then((res) => res.json())
@@ -453,7 +556,7 @@ export default ProfileVerifyDetails;
 //                   <div>
 //                     <img
 //                       className="rounded rounded-full w-[92px] h-[92px] ml-1 mt-2 mb-5"
-//                       src={`https://rsapp.bringin.io/${profileVarify?.image}`}
+//                       src={`https://rsapp.unbolt.co/${profileVarify?.image}`}
 //                     />
 //                     <div>
 //                       {profileVarify?.other?.profile_verify == false ? (
@@ -542,14 +645,14 @@ export default ProfileVerifyDetails;
 //                             <Image
 //                               width={500}
 //                               height={370}
-//                               src={`https://rsapp.bringin.io/${modalData?.path}`}
+//                               src={`https://rsapp.unbolt.co/${modalData?.path}`}
 //                             />
 //                             <Image
 //                               width={200}
 //                               height={135}
-//                               src={`https://rsapp.bringin.io/${companyverify?.path}`}
+//                               src={`https://rsapp.unbolt.co/${companyverify?.path}`}
 //                             />
-//                             {/* <embed src='https://rsapp.bringin.io/resumes/my-resume.pdf' type="application/pdf" width="50%" height="110px" /> */}
+//                             {/* <embed src='https://rsapp.unbolt.co/resumes/my-resume.pdf' type="application/pdf" width="50%" height="110px" /> */}
 //                           </div>
 //                         </div>
 

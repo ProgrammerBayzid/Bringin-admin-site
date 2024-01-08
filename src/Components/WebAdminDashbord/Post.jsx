@@ -32,6 +32,9 @@ const Post = () => {
           const blog = {
             authorName: data.authorName,
             blogTitle: data.blogTitle,
+            linkedin:data.linkedin,
+            facebook:data.facebook,
+            twiter:data.twiter,
             categoryName: data.categoryName,
             published_date: new Date().toLocaleString(),
             description: data.blogDescription,
@@ -115,6 +118,61 @@ const Post = () => {
                 <p className="text-red-500">{errors.blogTitle.message}</p>
               )}
             </div>
+
+
+            <div className="form-control w-full ">
+              <label className="label">
+                {" "}
+                <span className="label-text">Facebook Blog post link</span>
+              </label>
+              <input
+                type="text"
+                {...register("facebook", {
+                  required: "facebook Title is Required",
+                })}
+                className="input input-bordered w-full "
+              />
+              {errors.facebook && (
+                <p className="text-red-500">{errors.facebook.message}</p>
+              )}
+            </div>
+
+
+            <div className="form-control w-full ">
+              <label className="label">
+                {" "}
+                <span className="label-text">Twiter Blog post link</span>
+              </label>
+              <input
+                type="text"
+                {...register("twiter", {
+                  required: "twiter Title is Required",
+                })}
+                className="input input-bordered w-full "
+              />
+              {errors.twiter && (
+                <p className="text-red-500">{errors.twiter.message}</p>
+              )}
+            </div>
+
+            <div className="form-control w-full ">
+              <label className="label">
+                {" "}
+                <span className="label-text">Linkedin Blog post link</span>
+              </label>
+              <input
+                type="text"
+                {...register("linkedin", {
+                  required: "linkedin Title is Required",
+                })}
+                className="input input-bordered w-full "
+              />
+              {errors.linkedin && (
+                <p className="text-red-500">{errors.linkedin.message}</p>
+              )}
+            </div>
+
+
             <div className="form-control w-full ">
               <label className="label">
                 {" "}

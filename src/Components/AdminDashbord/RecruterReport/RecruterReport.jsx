@@ -12,7 +12,7 @@ const RecruterReport = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/job_report")
+    fetch("https://rsapp.unbolt.co/job_report")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -41,181 +41,218 @@ const RecruterReport = () => {
   const npage = Math.ceil(items / recruterPerPage);
   // const number =[...Array(npage+1).keys()].slice(1)
 
+  const [filteredCandidates, setFilteredCandidates] = useState([]);
+  const filterCandidates = () => {
+    setFilteredCandidates(
+      items.filter((pre) => {
+        return search.toLocaleLowerCase() === ""
+          ? pre
+          : pre?.jobid?.userid?.firstname === null
+          ? pre
+          : (
+              pre?.jobid?.userid?.firstname.toLocaleLowerCase() +
+              " " +
+              pre?.jobid?.userid?.lastname.toLocaleLowerCase()
+            ).includes(search) || pre?.jobid?.userid?.designation === null
+          ? pre
+          : pre?.jobid?.userid?.designation
+              .toLocaleLowerCase()
+              .includes(search) || pre?.jobid?.userid?.number === null
+          ? pre
+          : pre?.jobid?.userid?.number.toLocaleLowerCase().includes(search);
+      })
+    );
+  };
+  useEffect(() => {
+    filterCandidates(); // Call the filter function whenever the search input changes
+  }, [search, items]);
+  // 01716512671
   if (isLoding === false) {
     return <Spinner></Spinner>;
   }
   return (
     <div>
-      <div className="flex justify-between items-center">
-        <input
-          onChange={(e) => setSearch(e.target.value)}
-          type="text"
-          placeholder="Search by name, designation, mobile"
-          className="placeholder:text-[14px] border h-[36px] rounded rounded-[20px] pl-2 w-full max-w-xs outline-none"
-        />
-        <div className="w-[64px] h-[36px] flex fustify-between  border border-1 rounded rounded-[30px] bg-white ">
-          {/* <img className="w-5 h-5" src={f} /> */}
-          <label
-            // onClick={() => setFilterRecruters(profileVerify)}
-            htmlFor="repotedJob-modal"
-            className="cursor-pointer  px-3 py-2 "
-          >
-            Filter
-          </label>{" "}
+      <div className=" sticky  top-[13px] z-50 w-[320px]">
+        <div className="flex justify-between items-center ">
+          <div className="relative w-full max-w-xs">
+            <input
+              onChange={(e) => setSearch(e.target.value)}
+              type="text"
+              placeholder="Search by name, designation, mobile"
+              className="placeholder:text-[11px] placeholder:font-normal h-[35px]  w-[260px] pl-3 border  rounded rounded-[20px]   max-w-xs outline-none"
+            />
+            <img
+              src="/img/se.png"
+              className="absolute inset-y-0 right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 "
+            />
+          </div>
+
+          <div className="ml-3">
+            <label htmlFor="repotedJob-modal" className="cursor-pointer">
+              <img src="/img/fi.png" className="w-[60px] h-[30px]" />
+            </label>{" "}
+          </div>
         </div>
       </div>
       <div>
-        <div className="flex flex-col overflow-x-auto">
+        <div className="flex flex-col ">
           <div className="sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left ">
-                  <thead className="border-b font-medium bg-[#005784] ">
+              <div className="h-[600px] overflow-y-auto">
+                <table className="w-full text-left mt-5">
+                  <thead className="border-b font-medium bg-[#005784] top-[17px] z-50 ">
                     <tr>
                       <th
                         scope="col"
-                        className="pl-3 w-[100px] text-[14px] text-white ml-3 font-medium py-2 border-r-[1px] border-white"
+                        className="text-center w-[100px] text-[14px] text-white  font-medium py-2 border-r-[1px] border-white"
                       >
-                        ID NO
+                        N0
                       </th>
                       <th
                         scope="col"
-                        className="px-4 w-[70px] text-[14px] text-white ml-3 font-medium py-3 border-r-[1px] border-white"
+                        className="px-4 w-[70px] text-[14px] text-white  font-medium py-2 border-r-[1px] border-white"
                       >
-                        <img src={pro} />
+                        <div className="flex justify-center">
+                          <img className="w-[15px]" src={pro} />
+                        </div>
                       </th>
                       <th
                         scope="col"
-                        className="pl-3 w-[230px] text-[14px] text-white ml-3 font-medium  border-r-[1px] border-white"
+                        className="text-center w-[230px] text-[14px] text-white  font-medium  border-r-[1px] border-white"
                       >
                         Recruiter Name
                       </th>
                       <th
                         scope="col"
-                        className="pl-3 w-[190px] text-[14px] text-white ml-3 font-medium  border-r-[1px] border-white"
+                        className="text-center w-[190px] text-[14px] text-white  font-medium  border-r-[1px] border-white"
                       >
                         Designation
                       </th>
                       <th
                         scope="col"
-                        className="pl-3 w-[180px] text-[14px] text-white ml-3 font-medium  border-r-[1px] border-white"
+                        className="text-center w-[85px] text-[14px] text-white  font-medium  border-r-[1px] border-white"
                       >
                         Mobile
                       </th>
                       <th
                         scope="col"
-                        className="pl-3 w-[180px] text-[14px] text-white ml-3 font-medium  border-r-[1px] border-white"
+                        className="text-center w-[220px] text-[14px] text-white  font-medium  border-r-[1px] border-white"
                       >
                         Work Email
                       </th>
                       <th
                         scope="col"
-                        className="pl-3 w-[230px] text-[14px] text-white ml-3 font-medium  border-r-[1px] border-white"
+                        className="text-center w-[230px] text-[14px] text-white  font-medium  border-r-[1px] border-white"
                       >
                         Company Name
                       </th>
                       <th
                         scope="col"
-                        className="pl-3 w-[230px] text-[14px] text-white ml-3 font-medium  border-r-[1px] border-white"
+                        className="text-center w-[230px] text-[14px] text-white  font-medium  border-r-[1px] border-white"
                       >
                         Industry
                       </th>
                       <th
                         scope="col"
-                        className="pl-3 w-[180px] text-[14px] text-white ml-3 font-medium  border-r-[1px] border-white"
+                        className="text-center w-[180px] text-[14px] text-white  font-medium  border-r-[1px] border-white"
                       >
                         Location
                       </th>
                       <th
                         scope="col"
-                        className="pl-3 w-[180px] text-[14px] text-white ml-3 font-medium  border-r-[1px] border-white"
+                        className="text-center w-[180px] text-[14px] text-white  font-medium  border-r-[1px] border-white"
                       >
                         Reg. Date
                       </th>
                       <th
                         scope="col"
-                        className="pl-3 w-[180px] text-[14px] text-white ml-3 font-medium  border-r-[1px] border-white"
+                        className="text-center w-[100px] text-[14px] text-white  font-medium  border-r-[1px] border-white"
                       >
                         Subscription
                       </th>
                       <th
                         scope="col"
-                        className="pl-3 w-[10px] h-[10px] text-[00px] text-white ml-3 font-medium  border-r-[1px] border-white"
+                        className="text-center w-[10px] h-[10px] text-[00px] text-white  font-medium  border-r-[1px] border-white"
                       >
-                        <img className="w-[30px] " src={vec} />
+                        <div className="flex justify-center">
+                          <img className="w-[15px] " src={vec} />
+                        </div>
                       </th>
                     </tr>
                   </thead>
 
-                  {recruter
-                    .filter((pre) => {
-                      return search.toLocaleLowerCase() === ""
-                        ? pre
-                        : pre?.jobid?.userid?.firstname === null
-                        ? pre
-                        : (
-                          pre?.jobid?.userid?.firstname.toLocaleLowerCase() + 
-                          " " +
-                          pre?.jobid?.userid?.lastname.toLocaleLowerCase()
-                        ).includes(search) ||
-                          pre?.jobid?.userid?.designation === null
-                        ? pre
-                        : pre?.jobid?.userid?.designation
-                            .toLocaleLowerCase()
-                            .includes(search) || pre?.jobid?.userid?.number === null
-                        ? pre
-                        : pre?.jobid?.userid?.number.toLocaleLowerCase().includes(search);
-                    })
-                    .map((pre, i) => (
-                      <tbody key={i}>
+                  {filteredCandidates.map((pre, i) => (
+                      <tbody key={i} className="overflow-y-auto">
                         <tr className="">
-                          <td className="whitespace-nowrap text-[14px] pl-3 py-1 border-2 ">
-                            {i + 1}
+                          <td className="whitespace-nowrap text-[14px] text-center py-1 border-2 ">
+                            {(currentPage - 1) * recruterPerPage + i + 1}
                           </td>
-                          <td className="w-[50px] px-2   py-1 border-2  ">
-                            <Image
-                              className="rounded rounded-full "
-                              src={`https://rsapp.bringin.io/${pre?.jobid?.userid?.image}`}
-                            />
+                          <td className="w-[50px]   py-1 border-2  ">
+                            <div className="flex justify-center">
+                              <Image
+                                width={31}
+                                height={31}
+                                className="rounded rounded-full w-[30px] h-[30px]"
+                                src={`https://rsapp.unbolt.co/${pre?.jobid?.userid?.image}`}
+                              />
+                            </div>
                           </td>
-                          <td className="whitespace-nowrap text-[14px]  border-2 pl-3 py-1">
-                            {pre?.jobid?.userid?.firstname}{" "}
-                            {pre?.jobid?.userid?.lastname}
+                          <td className="whitespace-nowrap text-[14px]  border-2 pl-2 py-1">
+                            <a
+                              href={`https://unbolt.co/profiles-recruiters/${pre?._id}`}
+                              target="_blank"
+                            >
+                              <p className="hover:text-blue-500">
+                                {pre?.jobid?.userid?.firstname}{" "}
+                                {pre?.jobid?.userid?.lastname}
+                              </p>
+                            </a>
                           </td>
-                          <td className="whitespace-nowrap text-[14px]  border-2 pl-3 py-1">
+                          <td className="whitespace-nowrap text-[14px]  border-2 pl-2 py-1">
                             {pre?.jobid?.userid?.designation}
                           </td>
-                          <td className="whitespace-nowrap text-[14px]  border-2 pl-3 py-1">
-                            +880 {pre?.jobid?.userid?.number}
+                          <td className="whitespace-nowrap text-[14px]  border-2 pl-2 py-1">
+                            {pre?.jobid?.userid?.number}
                           </td>
-                          <td className="whitespace-nowrap text-[14px]  border-2 pl-3 py-1">
+                          <td className="whitespace-nowrap text-[14px]  border-2 pl-2 py-1">
                             {pre?.jobid?.userid?.email}
                           </td>
-                          <td className="whitespace-nowrap text-[14px]  border-2 pl-3 py-1">
+                          <td className="whitespace-nowrap text-[14px]  border-2 pl-2 py-1">
                             {pre?.jobid?.company?.legal_name}
                           </td>
-                          <td className="whitespace-nowrap text-[14px]  border-2 pl-3 py-1">
+
+                          <td className="whitespace-nowrap  text-[14px]  border-2 pl-2 py-1">
                             {
                               pre?.jobid?.company?.industry?.industryid
                                 ?.industryname
                             }
                           </td>
-                          <td className="whitespace-nowrap text-[14px]  border-2 pl-3 py-1">
-                            {pre?.jobid?.company?.c_location?.city}
+                          <td className="whitespace-nowrap text-[14px] tooltip-trigger relative group  border-2 pl-2 py-1">
+                            {pre?.jobid?.company?.c_location?.formet_address.slice(
+                              0,
+                              20
+                            )}
+                            <p className="tooltip absolute bg-[#0077B5] text-white p-2 rounded-md -mt-2 invisible group-hover:opacity-100 group-hover:visible transition -left-56 top-1/2 transform translate-y-[5%] z-40">
+                              {pre?.jobid?.company?.c_location?.formet_address}
+                            </p>
                           </td>
-                          <td className="whitespace-nowrap text-[14px]  border-2 pl-3 py-1">
-                            {pre?.createdAt.slice(0, 10)}
+                          <td className="whitespace-nowrap text-[14px]  border-2 pl-2 py-1">
+                            {pre?.createdAt.slice(8, 10) +
+                              "-" +
+                              pre?.createdAt.slice(5, 7) +
+                              "-" +
+                              pre?.createdAt.slice(0, 4)}
                           </td>
-                          <td className="whitespace-nowrap text-[14px]  border-2 pl-3 py-1">
+                          <td className="whitespace-nowrap text-[14px]  border-2 pl-2 py-1">
                             {pre?.jobid?.userid?.other?.premium === false
                               ? "Free User"
                               : "Premium"}
                           </td>
-                          <td className="whitespace-nowrap text-[14px]  border-2 pl-3 py-1">
+                          <td className="whitespace-nowrap text-[14px]  border-2 pl-1 py-1">
                             <label
                               onClick={() => setrecruterreportdetails(pre)}
                               htmlFor="recruterreport-details-modal"
-                              className="cursor-pointer border px-3 py-2 rounded rounded-[30px]"
+                              className="cursor-pointer border px-2 py-1 rounded rounded-[30px]"
                             >
                               att
                             </label>
@@ -225,10 +262,13 @@ const RecruterReport = () => {
                     ))}
                 </table>
               </div>
-              <div className=" flex justify-between px-10 mt-10 ">
+              {/* <div className=" flex justify-between px-10 mt-10 ">
                 <div>
                   <p className="text-[16px]">
-                    {firstIndex + 1} - {lastIndex} of {repoted.length}
+                    {Math.min(firstIndex + 1, repoted.length)} -{" "}
+                    {Math.min(lastIndex, repoted.length)} of {repoted.length} -{" "}
+                    Page {currentPage} of{" "}
+                    {Math.ceil(repoted.length / recruterPerPage)},
                   </p>
                 </div>
                 <div>
@@ -251,7 +291,7 @@ const RecruterReport = () => {
                     </p>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

@@ -4,7 +4,7 @@ const FilterModal = ({setItems, data}) => {
   const [industry, setIndustry] = useState([]);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/industry")
+    fetch("https://rsapp.unbolt.co/admin/industry")
       .then((res) => res.json())
       .then((data) => {
         setIndustry(data);
@@ -82,7 +82,7 @@ const FilterModal = ({setItems, data}) => {
       value: true,
     },
     {
-      subscription: "Platinum",
+      subscription: "Freemium",
       value: true,
     },
   ];
@@ -103,7 +103,7 @@ const FilterModal = ({setItems, data}) => {
               <div className="p-5">
                 <div className="flex justify-between">
                   <div>
-                    <p className="text-[16px] w-[114px] font-semibold bg-[#0077B5] text-white p-2 rounded rounded-[20px]">
+                    <p className="text-[14px] w-[100px] font-semibold bg-[#0077B5] text-white px-2 py-1 rounded rounded-[20px]">
                       Subscription
                     </p>
                     <div className="flex gap-2 mt-3">
@@ -141,7 +141,7 @@ const FilterModal = ({setItems, data}) => {
                   </div>
                 </div>
                 <div className="mt-5">
-                  <p className="text-[16px] w-[117px] font-semibold bg-[#0077B5] text-white p-2 rounded rounded-[20px]">
+                  <p className="text-[14px] w-[105px] font-semibold bg-[#0077B5] text-white py-1 px-2 rounded rounded-[20px]">
                     Job Industry
                   </p>
 

@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../Context/Context";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { setAuthToken } from "../../useRole/useToken";
 
 const SingUp = () => {
   const {
@@ -16,6 +18,11 @@ const SingUp = () => {
 
   const navigate = useNavigate();
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const show = () => {
+    setShowPassword(!showPassword);
+  };
   const handleSignUp = (data) => {
     const photoURL = data.photoURL[0];
     const formData = new FormData();
@@ -60,8 +67,7 @@ const SingUp = () => {
 
   const saveUser = (displayName, email, photoURL) => {
     const user = { displayName, email, photoURL };
-    console.log(user);
-    fetch("https://rsapp.bringin.io/email_singup", {
+    fetch("https://rsapp.unbolt.co/email_singup", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -70,10 +76,11 @@ const SingUp = () => {
     })
       .then((res) => res.json())
       .then((data) => {
+        setAuthToken(email);
         setUser((pred) => ({ ...pred, ...user }));
         setRender((prev) => !prev);
         navigate("/");
-        console.log(data);
+        console.log("data",data);
       });
   };
 
@@ -133,22 +140,31 @@ const SingUp = () => {
               {" "}
               <span className="label-text">Password</span>
             </label>
-            <input
-              type="password"
-              {...register("password", {
-                required: "Password is required",
-                minLength: {
-                  value: 6,
-                  message: "Password must be 6 characters long",
-                },
-                pattern: {
-                  value: /(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])/,
-                  message:
-                    "Password must have uppercase, number and special characters",
-                },
-              })}
-              className="input input-bordered w-full max-w-xs"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be 6 characters or longer",
+                  },
+                })}
+                placeholder="Password"
+                className="input input-bordered w-full max-w-xs"
+              />
+              <button
+                type="button" // Prevent the button from triggering form submission
+                className="label-text absolute inset-y-0 right-2"
+                onClick={show}
+              >
+                {showPassword ? (
+                  <AiOutlineEyeInvisible></AiOutlineEyeInvisible>
+                ) : (
+                  <AiOutlineEye></AiOutlineEye>
+                )}
+              </button>
+            </div>
             {/* <label className="label"> <span className="label-text">Please selected a role</span></label>
                         <select
                             type="text" {...register("designation", {
@@ -159,6 +175,7 @@ const SingUp = () => {
                             <option>Seller</option>
                         </select> */}
           </div>
+
           <input
             className="btn bg-indigo-500 text-white w-full mt-4"
             value="Sign Up"

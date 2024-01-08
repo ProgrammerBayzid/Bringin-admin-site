@@ -47,7 +47,7 @@ const Context = ({ children }) => {
   // 5. logOut
   const logOut = () => {
     setLoding(true);
-    localStorage.removeItem("token");
+    localStorage.removeItem("admin_token");
     return signOut(auth);
   };
   // 6. login
@@ -69,9 +69,8 @@ const Context = ({ children }) => {
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      console.log(currentUser);
       if (currentUser) {
-        fetch(`https://rsapp.bringin.io/user?email=${currentUser.email}`)
+        fetch(`https://rsapp.unbolt.co/user?email=${currentUser.email}`)
           .then((res) => res.json())
           .then((data) => {
             data.uid = currentUser.uid;

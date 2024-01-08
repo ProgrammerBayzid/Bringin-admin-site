@@ -14,7 +14,7 @@ const AddLocation = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/admin/location")
+    fetch("https://rsapp.unbolt.co/admin/location")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -36,27 +36,45 @@ const AddLocation = () => {
       division: data.division,
       city: data.city,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch("https://rsapp.bringin.io/location", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(locationdata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    if (token === null) {
+      console.log("token not found");
+    } else {
+
+
+      fetch("https://rsapp.unbolt.co/location", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+
+        },
+        body: JSON.stringify(locationdata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
+
   };
 
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
-    if (proced) {
-      fetch(`https://rsapp.bringin.io/admin/location/${id}`, {
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if (!proced && token === null) {
+      console.log("token not found");
+    } else {
+      fetch(`https://rsapp.unbolt.co/admin/location/${id}`, {
         method: "DELETE",
+        headers:{          Authorization: `Bearer ${token}`,
+      }
       })
         .then((res) => res.json())
         .then((data) => {
@@ -84,19 +102,57 @@ const AddLocation = () => {
 
   const dragItem = useRef(null);
   const dragOverItem = useRef(null);
+
+
   const handelSort = () => {
-    let _location = [...location];
-    //remove and save the dragged item content
-    const draggedItemContent = _location.splice(dragItem.current, 1)[0];
-    //switch the position
-    _location.splice(dragOverItem.current, 0, draggedItemContent);
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    //reset the position ref
-    dragItem.current = null;
-    dragOverItem.current = null;
+    if (token === null) {
+      console.log("token not found");
+    } else {
 
-    //update the actual array
-    setLocation(_location);
+
+
+      let _location = [...location];
+      // Remove and save the dragged item content
+      const draggedItemContent = _location.splice(dragItem.current, 1)[0];
+      // Switch the position
+      _location.splice(dragOverItem.current, 0, draggedItemContent);
+    
+      // Reset the position refs
+      dragItem.current = null;
+      dragOverItem.current = null;
+    
+      // Prepare data for the API request
+      const updateData = _location.map((category, index) => ({
+        id: category._id, // Replace with the actual identifier property
+        sortOrder: index + 1, // Update the sort order
+      }));
+    
+      // Update the actual array
+      setLocation(_location);
+    
+      // Make the API request to update the category order
+      fetch("https://rsapp.unbolt.co/admin/location_update_bulk", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(updateData),
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log("Category order updated successfully.");
+          } else {
+            console.error("Category order update failed.");
+          }
+        })
+        .catch((error) => {
+          console.error("API request error:", error);
+        });
+    }
   };
 
   const [edit, setEdit] = useState(null);
@@ -110,20 +166,30 @@ const AddLocation = () => {
     const editdata = {
       name: data.name,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch(`https://rsapp.bringin.io/location_update/${edit._id}`, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(editdata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    if (token === null) {
+      console.log("token not found");
+    } else {
+
+
+      fetch(`https://rsapp.unbolt.co/location_update/${edit._id}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(editdata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
+
   };
 
   if (isLoding === false) {

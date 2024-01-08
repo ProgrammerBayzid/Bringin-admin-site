@@ -62,6 +62,14 @@ import VarifyProfile from "../Components/AdminDashbord/VarifyProfile/VarifyProfi
 import CandidateList from "../Components/AdminDashbord/CandidateList/CandidateList";
 import CandidateDetails from "../Components/AdminDashbord/CandidateList/CandidateDetails";
 import RejectRecureter from "../Components/AdminDashbord/RejectRecureter/RejectRecureter";
+import UserContactus from "../Components/AdminDashbord/UserContactus/UserContactus";
+import HelpFeedback from "../Components/AdminDashbord/HelpFeedback/HelpFeedback";
+import AllRecruter from "../Components/AdminDashbord/AllRecruter/AllRecruter";
+import JobPost from "../Components/AdminDashbord/JobPost/JobPost";
+import RejectedJobPost from "../Components/AdminDashbord/JobPost/RejectedJobPost";
+import ProfileNotCompliteCandidateList from "../Components/AdminDashbord/CandidateList/ProfileNotCompliteCandidateList";
+import RegisterRecruter from "../Components/AdminDashbord/ProfileVerify/RegisterRecruter";
+import RecruterJobpost from "../Components/AdminDashbord/VarifyProfile/JobPost/RecruterJobpost";
 
 export const route = createBrowserRouter([
   {
@@ -80,10 +88,7 @@ export const route = createBrowserRouter([
         path: "/login",
         element: <Login></Login>,
       },
-      {
-        path: "/singup",
-        element: <SingUp></SingUp>,
-      },
+      
       {
         path:"/profile",
         element:<PrivetRoute><Profile></Profile></PrivetRoute> 
@@ -100,6 +105,18 @@ export const route = createBrowserRouter([
         element:<AppPrivet><ProfileVerify></ProfileVerify></AppPrivet> ,
       },
       {
+        path: "/verification/profile_register/:id",
+        element:<AppPrivet><RegisterRecruter></RegisterRecruter></AppPrivet> ,
+      },
+      {
+        path: "/verification/recruter_job_post/:id",
+        element:<AppPrivet><RecruterJobpost></RecruterJobpost></AppPrivet> ,
+      },
+      {
+        path: "/verification/All_recruter_profile",
+        element:<AppPrivet><AllRecruter></AllRecruter></AppPrivet> ,
+      },
+      {
         path: "/verification/rejected_recruiters",
         element:<AppPrivet><RejectRecureter></RejectRecureter></AppPrivet> ,
       },
@@ -107,7 +124,7 @@ export const route = createBrowserRouter([
         path: "/verification/profile_varify/:id",
         element:<AppPrivet><ProfileVerifyDetails></ProfileVerifyDetails></AppPrivet> ,
         loader: ({ params }) =>
-          fetch(`https://rsapp.bringin.io/profile_varifys/${params.id}`),
+          fetch(`https://rsapp.unbolt.co/profile_varifys/${params.id}`),
       },
 
       {
@@ -118,7 +135,7 @@ export const route = createBrowserRouter([
         path: "/verification/candidate_report_details/:id",
         element:<AppPrivet><RepotedDetails></RepotedDetails></AppPrivet> ,
         loader: ({ params }) =>
-          fetch(`https://rsapp.bringin.io/candidate_report/${params.id}`),
+          fetch(`https://rsapp.unbolt.co/candidate_report/${params.id}`),
       },
       {
         path: "/verification/job_report",
@@ -128,7 +145,7 @@ export const route = createBrowserRouter([
         path: "/verification/recruter_ob_report_details/:id",
         element:<AppPrivet><RecruterReportDetails></RecruterReportDetails></AppPrivet> ,
         loader: ({ params }) =>
-          fetch(`https://rsapp.bringin.io/job_report/${params.id}`),
+          fetch(`https://rsapp.unbolt.co/job_report/${params.id}`),
       },
       {
         path: "/verification/verifyProfile",
@@ -138,7 +155,7 @@ export const route = createBrowserRouter([
         path: "/verification/verifyProfile/:id",
         element:<AppPrivet><RecruterReportDetails></RecruterReportDetails></AppPrivet> ,
         loader: ({ params }) =>
-          fetch(`https://rsapp.bringin.io/job_report/${params.id}`),
+          fetch(`https://rsapp.unbolt.co/job_report/${params.id}`),
       },
 
 
@@ -149,13 +166,32 @@ export const route = createBrowserRouter([
           <CandidateList></CandidateList>
         </AppPrivet>
       },
+      {
+        path: "/verification/candidate_profile_not_complite",
+        element: <AppPrivet>
+          <ProfileNotCompliteCandidateList></ProfileNotCompliteCandidateList>
+        </AppPrivet>
+      },
+
+      {
+        path: "/verification/job_post",
+        element: <AppPrivet>
+          <JobPost></JobPost>
+        </AppPrivet>
+      },
+      {
+        path: "/verification/rejected_job_post",
+        element: <AppPrivet>
+          <RejectedJobPost></RejectedJobPost>
+        </AppPrivet>
+      },
 
 
       {
         path: "/verification/candidate/:id",
         element:<AppPrivet><CandidateDetails></CandidateDetails></AppPrivet> ,
         loader: ({ params }) =>
-          fetch(`https://rsapp.bringin.io/candidate/${params.id}`),
+          fetch(`https://rsapp.unbolt.co/candidate/${params.id}`),
       },
 
     ]
@@ -175,10 +211,24 @@ export const route = createBrowserRouter([
         path: "/dashboard/all_admin_user",
         element: <AdminRouter><AllAdminUser/></AdminRouter> 
       },
+      {
+        path: "/dashboard/singup",
+        element: <AdminRouter>
+          <SingUp></SingUp>
+          </AdminRouter>,
+      },
       
       {
         path: "/dashboard/jobetype",
         element: <AppPrivet> <JobType></JobType></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/usercontactus",
+        element: <AppPrivet> <UserContactus></UserContactus></AppPrivet> ,
+      },
+      {
+        path: "/dashboard/helpfeedback",
+        element: <AppPrivet> <HelpFeedback></HelpFeedback></AppPrivet> ,
       },
       {
         path: "/dashboard/industryadd",
@@ -186,7 +236,7 @@ export const route = createBrowserRouter([
       },
       {
         path: "/dashboard/categoryadd",
-        element: <CategoryAdd></CategoryAdd>,
+        element:<AppPrivet> <CategoryAdd></CategoryAdd></AppPrivet> ,
       },
       {
         path: "/dashboard/functionalareaadd",
@@ -263,7 +313,7 @@ export const route = createBrowserRouter([
         path: "/dashboard/premium_user/:id",
         element: <AppPrivet><PremiumUserDetails></PremiumUserDetails></AppPrivet> ,
         loader: ({ params }) =>
-          fetch(`https://rsapp.bringin.io/premium_user/${params.id}`),
+          fetch(`https://rsapp.unbolt.co/premium_user/${params.id}`),
       },
       {
         path: "/dashboard/company_varify",
@@ -273,7 +323,7 @@ export const route = createBrowserRouter([
         path: "/dashboard/company_varify/:id",
         element: <AppPrivet><CompanyVerifyDetails></CompanyVerifyDetails></AppPrivet> ,
         loader: ({ params }) =>
-          fetch(`https://rsapp.bringin.io/company_varify/${params.id}`),
+          fetch(`https://rsapp.unbolt.co/company_varify/${params.id}`),
       },
       
     

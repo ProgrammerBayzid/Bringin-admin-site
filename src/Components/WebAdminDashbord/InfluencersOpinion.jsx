@@ -153,7 +153,6 @@ const InfluencersOpinion = () => {
                 <textarea
                   type="text"
                   {...register("facebook", {
-                    required: "Facebook Profile Link is Required",
                   })}
                   className="input input-bordered w-full "
                 />
@@ -169,7 +168,6 @@ const InfluencersOpinion = () => {
                 <textarea
                   type="text"
                   {...register("linkedin", {
-                    required: "Linkedin Profile Link is Required",
                   })}
                   className="input input-bordered w-full "
                 />
@@ -186,7 +184,6 @@ const InfluencersOpinion = () => {
                 <textarea
                   type="text"
                   {...register("youtube", {
-                    required: "Linkedin Profile Link is Required",
                   })}
                   className="input input-bordered w-full "
                 />

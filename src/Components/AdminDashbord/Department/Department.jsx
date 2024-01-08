@@ -13,7 +13,7 @@ const Department = () => {
   const [isLoding, setIsLoding] = useState(false);
 
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/department")
+    fetch("https://rsapp.unbolt.co/department")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -36,28 +36,48 @@ const Department = () => {
       published_date: new Date().toLocaleString(),
     };
 
-    fetch("https://rsapp.bringin.io/department", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(departmentdata),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data) {
-          setRefresh(!refresh);
-        }
-        e.target.reset();
-        console.log(data);
-      });
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+  
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+
+      fetch("https://rsapp.unbolt.co/department", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(departmentdata),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data) {
+            setRefresh(!refresh);
+          }
+          e.target.reset();
+          console.log(data);
+        });
+    }
+
   };
 
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
-    if (proced) {
-      fetch(`https://rsapp.bringin.io/department/${id}`, {
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if (!proced && token === null) {
+      console.log("token not found");
+    } else {
+      fetch(`https://rsapp.unbolt.co/department/${id}`, {
         method: "DELETE",
+        headers:{
+          Authorization: `Bearer ${token}`,
+
+        }
       })
         .then((res) => res.json())
         .then((data) => {
@@ -110,20 +130,31 @@ const Department = () => {
     const editdata = {
       name: data.name,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch(`https://rsapp.bringin.io/department_update/${edit._id}`, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(editdata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+
+
+      fetch(`https://rsapp.unbolt.co/department_update/${edit._id}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editdata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
+
   };
 
   if (isLoding === false) {

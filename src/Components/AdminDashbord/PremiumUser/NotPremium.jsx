@@ -12,7 +12,7 @@ const NotPremium = () => {
   
     const [premium, setPremium] = useState([]);
     useEffect(() => {
-      fetch("https://rsapp.bringin.io/premium_user?premium=false")
+      fetch("https://rsapp.unbolt.co/premium_user?premium=false")
         .then((res) => res.json())
         .then((data) => {
           setIsLoding(true);
@@ -109,9 +109,9 @@ const NotPremium = () => {
                      </td>
                      <td className="whitespace-nowrap px-6 py-4 font-medium">
                        <div>
-                         {pre?.premium === false ?(
+                         {pre?.other?.premium === false ?(
                            <p className="my-2">
-                             Not Premium
+                             Free User
                            </p>
                          ) : (
                            <p>Null</p>

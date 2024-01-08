@@ -14,7 +14,7 @@ const Educationlavel = () => {
 
   const [educationlavel, setEducationlavel] = useState([]);
   useEffect(() => {
-    fetch("https://rsapp.bringin.io/education_lavel")
+    fetch("https://rsapp.unbolt.co/education_lavel")
       .then((res) => res.json())
       .then((data) => {
         setIsLoding(true);
@@ -35,27 +35,46 @@ const Educationlavel = () => {
     const educationlaveldata = {
       name: data.name,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch("https://rsapp.bringin.io/education_lavel", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(educationlaveldata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+
+      fetch("https://rsapp.unbolt.co/education_lavel", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+
+        },
+        body: JSON.stringify(educationlaveldata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
   };
 
   const handelDeeted = (id) => {
     const proced = window.confirm("Are You Sure");
-    if (proced) {
-      fetch(`https://rsapp.bringin.io/admin/education_lavel/${id}`, {
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
+
+    if (!proced && token === null) {
+      console.log("token not found");
+    } else {
+      fetch(`https://rsapp.unbolt.co/admin/education_lavel/${id}`, {
         method: "DELETE",
+        headers:{
+          Authorization: `Bearer ${token}`,
+
+        }
       })
         .then((res) => res.json())
         .then((data) => {
@@ -83,20 +102,60 @@ const Educationlavel = () => {
 
   const dragItem = useRef(null);
   const dragOverItem = useRef(null);
+
   const handelSort = () => {
-    let _educationlavel = [...educationlavel];
-    //remove and save the dragged item content
-    const draggedItemContent = _educationlavel.splice(dragItem.current, 1)[0];
-    //switch the position
-    _educationlavel.splice(dragOverItem.current, 0, draggedItemContent);
 
-    //reset the position ref
-    dragItem.current = null;
-    dragOverItem.current = null;
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    //update the actual array
-    setEducationlavel(_educationlavel);
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+
+      let _educationlavel = [...educationlavel];
+      // Remove and save the dragged item content
+      const draggedItemContent = _educationlavel.splice(dragItem.current, 1)[0];
+      // Switch the position
+      _educationlavel.splice(dragOverItem.current, 0, draggedItemContent);
+    
+      // Reset the position refs
+      dragItem.current = null;
+      dragOverItem.current = null;
+    
+      // Prepare data for the API request
+      const updateData = _educationlavel.map((category, index) => ({
+        id: category._id, // Replace with the actual identifier property
+        sortOrder: index + 1, // Update the sort order
+      }));
+    
+      // Update the actual array
+      setEducationlavel(_educationlavel);
+    
+      // Make the API request to update the category order
+      fetch("https://rsapp.unbolt.co/admin/education_lavel_update_bulk", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updateData),
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log("Category order updated successfully.");
+          } else {
+            console.error("Category order update failed.");
+          }
+        })
+        .catch((error) => {
+          console.error("API request error:", error);
+        });
+    }
   };
+
+
+
 
   const [edit, setEdit] = useState(null);
 
@@ -109,20 +168,30 @@ const Educationlavel = () => {
     const editdata = {
       name: data.name,
     };
+    const storedToken = localStorage.getItem("admin_token");
+    const token = storedToken ? storedToken.replace(/"/g, "") : null;
 
-    fetch(`https://rsapp.bringin.io/education_update/${edit._id}`, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(editdata),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setRefresh(!refresh);
-        e.target.reset();
-        console.log(result);
-      });
+    if ( token === null) {
+      console.log("token not found");
+    } else {
+
+
+      fetch(`https://rsapp.unbolt.co/education_update/${edit._id}`, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editdata),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setRefresh(!refresh);
+          e.target.reset();
+          console.log(result);
+        });
+    }
+
   };
 
   if (isLoding === false) {
